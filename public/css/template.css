@@ -1,0 +1,19 @@
+header{
+    display: -webkit-flex;
+    display: flex;
+    align-items: baseline;
+}
+#site_logo{
+    font-family: Pacifico, serif;
+    list-style: none;
+    margin: 0 3vw 0;
+}
+#header_bar{
+    display: -webkit-flex;
+    display: flex;
+    list-style: none;
+
+}
+#header_bar li{
+    margin: 0 1vw 0;
+}
