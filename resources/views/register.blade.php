@@ -11,8 +11,8 @@
     <form action="{{url("register/confirm")}}" method="post">
         @csrf
         <label>
-            ユーザーID:
-            <input type="text" name="user_id" placeholder="ユーザーID" value="{{old("user_id",@$user_id ?: "")}}" required>
+            ユーザー名:
+            <input type="text" name="user_name" placeholder="ユーザーID" value="{{old("user_name",@$user_name ?: "")}}" required>
         </label>
         <label>
             メールアドレス:

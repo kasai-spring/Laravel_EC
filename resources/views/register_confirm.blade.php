@@ -4,7 +4,7 @@
 
 @section("main")
     <h2>この内容で登録してもよろしいですか?</h2>
-    <p>ユーザー名:{{$user_id}}</p>
+    <p>ユーザー名:{{$user_name}}</p>
     <p>メールアドレス:{{$email}}</p>
     <form id="confirm_form" method="post">
         @csrf

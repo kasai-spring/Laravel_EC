@@ -9,7 +9,7 @@
 @yield("head")
 <body>
 <header>
-    <h1 id="site_logo"><?php echo config("app.name")?></h1>
+    <a id="site_logo" href="{{url("/")}}"><h1><?php echo config("app.name")?></h1></a>
     <ul id="header_bar">
         @if(!session("login_id"))
         <li><h2><a href="{{url('login')}}">ログイン</a></h2></li>

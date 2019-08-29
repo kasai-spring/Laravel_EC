@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers;
 use App\Models\Goods;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index(){
-        $data = Goods::inRandomOrder()
-            ->limit(24)
-            ->get();
+        try{
+            $data = Goods::inRandomOrder()
+                ->limit(24)
+                ->get();
+        }catch (QueryException $e){
+            return view("error");
+        }
+
+
+        return view("home", compact("data"));
 
     }
 }

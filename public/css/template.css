@@ -3,17 +3,25 @@ header{
     display: flex;
     align-items: baseline;
 }
+
 #site_logo{
     font-family: Pacifico, serif;
-    list-style: none;
+    text-decoration: none;
+    color: black;
     margin: 0 3vw 0;
 }
+
+#site_logo :hover{
+    text-decoration: none;
+}
+
 #header_bar{
     display: -webkit-flex;
     display: flex;
     list-style: none;
 
 }
+
 #header_bar li{
     margin: 0 1vw 0;
 }
