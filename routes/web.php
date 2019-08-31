@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get("/", "HomeController@index")->name("home");
 
-Route::get("login", function () {
+Route::get("login", function (){
     return view("login");
 })->name("login");
 
@@ -43,4 +43,8 @@ Route::post("register/complete", "UserRegisterController@user_register");
 Route::get("mypage", "MyPageController@show_mypage")
     ->name("mypage");
 
+Route::get("goods/detail/{good_id}", "GoodsController@show_detail")
+    ->where("good_id","[0-9]+");
 
+Route::post("goods/add_cart/{good_id}", "CartController@add_cart")
+    ->where("good_id","[0-9]+");

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUserRolesTable extends Migration
+class CreateCartsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,15 @@ class CreateUserRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_roles', function (Blueprint $table) {
+        Schema::create('carts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer("role_id");
-            $table->bigInteger("user_id")->unsigned();
-            $table->foreign("user_id")->references("id")->on("users");
+            $table->unsignedBigInteger("user_id");
+            $table->unsignedBigInteger("good_id");
+            $table->integer("good_count");
             $table->timestamps();
-            $table->softDeletes();
+
+            $table->foreign("user_id")->references("id")->on("users");
+            $table->foreign("good_id")->references("id")->on("users");
         });
     }
 
@@ -30,6 +32,6 @@ class CreateUserRolesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_roles');
+        Schema::dropIfExists('carts');
     }
 }
