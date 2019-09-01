@@ -3,11 +3,11 @@
 @section("title", "ログイン")
 
 @section("main")
-    @if(isset($errors))
+    @isset($errors)
         @foreach($errors->all() as $error_message)
             <h2>{{$error_message}}</h2>
         @endforeach
-    @endif
+    @endisset
     <h3>ログイン</h3>
     <form action="{{url("login")}}" method="post">
         @csrf

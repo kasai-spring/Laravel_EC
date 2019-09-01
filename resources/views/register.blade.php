@@ -3,11 +3,11 @@
 @section("title", "ユーザー登録")
 
 @section("main")
-    @if(isset($errors))
+    @isset($errors)
         @foreach($errors->all() as $error_message)
             <h2>{{$error_message}}</h2>
         @endforeach
-    @endif
+    @endisset
     <form action="{{url("register/confirm")}}" method="post">
         @csrf
         <label>

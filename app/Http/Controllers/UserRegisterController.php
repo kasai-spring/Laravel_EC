@@ -15,7 +15,7 @@ class UserRegisterController extends Controller
         $validator = Validator::make($request->all(), [
             "user_name" => "required|string|between:4,16",
             "email" => "required|string|email:rfc|unique:users",
-            "password" => "required|string|between:6,32|regex:/\A[0-9a-zA-Z_-]+\z/",
+            "password" => "required|string|between:6,32|regex:/[-~]/",
             "re_password" => "required|string|same:password",
         ], [
             "password.not_regex" => ":attributeは半角英数字とハイフンとアンダーバーのみを入力してください",

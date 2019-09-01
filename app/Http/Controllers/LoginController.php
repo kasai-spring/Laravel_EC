@@ -16,7 +16,7 @@ class LoginController extends Controller
     public function login(Request $request){
         $validator = Validator::make($request->all(), [
             "email" => "required|string|exists:users|email:rfc",
-            "password" => "required|string|between:6,32|regex:/\A[0-9a-zA-Z_-]+\z/",
+            "password" => "required|string|between:6,32|regex:/[-~]/",
         ]);
         $email = $request->input("email");
         $password = $request->input("password");
@@ -31,7 +31,7 @@ class LoginController extends Controller
             if(Hash::check($password, $db_password)){
                 $user->timestamps = false;
                 $user->update(["last_logined_at" => now()]);
-                session()->put(["login_id" => $email]);
+                session()->put(["login_id" => $user->id]);
                 return redirect()
                     ->route("mypage");
             }

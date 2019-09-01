@@ -29,8 +29,20 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Goods whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Goods whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string $picture_path
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Goods wherePicturePath($value)
  */
 class Goods extends Model
 {
     protected $guarded = [];
+
+    public function carts(){
+        $this->hasMany("App\Models\Carts");
+    }
+
+    public function goodscategory(){
+        $this->belongsTo("App\Models\GoodsCategory");
+    }
+
+
 }

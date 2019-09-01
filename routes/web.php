@@ -48,3 +48,5 @@ Route::get("goods/detail/{good_id}", "GoodsController@show_detail")
 
 Route::post("goods/add_cart/{good_id}", "CartController@add_cart")
     ->where("good_id","[0-9]+");
+
+Route::get("cart", "CartController@show_cart");

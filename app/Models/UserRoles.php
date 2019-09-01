@@ -21,8 +21,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserRoles whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserRoles whereUserId($value)
  * @mixin \Eloquent
+ * @property string|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\UserRoles whereDeletedAt($value)
  */
 class UserRoles extends Model
 {
-    //
+    protected $guarded = [];
+
+    public function user(){
+        $this -> belongsTo("App\Models\User");
+    }
 }
