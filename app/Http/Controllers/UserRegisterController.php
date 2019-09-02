@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Users;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -61,7 +61,7 @@ class UserRegisterController extends Controller
         $raw_password = session()->pull("register_password");
         $password = Hash::make($raw_password);
         try {
-            $user_create = User::create([
+            $user_create = Users::create([
                 "user_name" => $user_name,
                 "email" => $email,
                 "password" => $password,

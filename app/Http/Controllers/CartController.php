@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Goods;
-use App\Models\User;
+use App\Models\Users;
 use App\Models\Carts;
 
 use Illuminate\Database\QueryException;
@@ -21,6 +21,9 @@ class CartController extends Controller
         $login_id = session()->get("login_id");
         $cart_data = Carts::where("user_id",$login_id)
             ->get();
+
+
+        return view("cart", compact("cart_data"));
     }
 
     public function add_cart(Request $request, $good_id)
@@ -30,7 +33,7 @@ class CartController extends Controller
         ]);
         $login_id = session()->get("login_id");
         if ($validator->fails() || !Goods::find($good_id)->whereNull("deleted_at")->exists() ||
-            !User::find($login_id)->whereNull("deleted_at")->exists()) {
+            !Users::find($login_id)->whereNull("deleted_at")->exists()) {
             return redirect()
                 ->route("error");
         }

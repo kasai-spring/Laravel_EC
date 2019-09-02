@@ -50,3 +50,7 @@ Route::post("goods/add_cart/{good_id}", "CartController@add_cart")
     ->where("good_id","[0-9]+");
 
 Route::get("cart", "CartController@show_cart");
+
+Route::post("settlement/address", "SettlementController@address_select");
+
+Route::post("settlement/confirm", "SettlementController@confirm");

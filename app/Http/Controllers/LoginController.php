@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\User;
+use App\Models\Users;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Hash;
@@ -22,7 +22,7 @@ class LoginController extends Controller
         $password = $request->input("password");
 
         if(!$validator->fails()){
-            $user = User::where("email",$email)
+            $user = Users::where("email",$email)
             ->whereNull("deleted_at")
             ->first();
 

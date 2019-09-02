@@ -23,16 +23,18 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Carts whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Carts whereUserId($value)
  * @mixin \Eloquent
+ * @property-read \App\Models\Goods $good
+ * @property-read \App\Models\Users $user
  */
 class Carts extends Model
 {
     protected $guarded = [];
 
     public function user(){
-        return $this->belongsTo("App\Models\User");
+        return $this->belongsTo("App\Models\Users");
     }
 
-    public function goods(){
+    public function good(){
         return $this->belongsTo("App\Models\Goods");
     }
 }

@@ -12,12 +12,12 @@
     <a id="site_logo" href="{{url("/")}}"><h1><?php echo config("app.name")?></h1></a>
     <ul id="header_bar">
         @if(!session("login_id"))
-        <li><h2><a href="{{url('login')}}">ログイン</a></h2></li>
+        <li><h2><a href="{{url("login")}}">ログイン</a></h2></li>
         <li><h2><a href="{{url("register")}}">登録</a></h2></li>
         @endif
-        <li><h2>カート</h2></li>
-        <li><h2>マイページ</h2></li>
+        <li><h2><a href="{{url("cart")}}">カート</a></h2></li>
         @if(session("login_id"))
+        <li><h2>マイページ</h2></li>
         <li><h2><a href="{{url("logout")}}">ログアウト</a></h2></li>
         @endif
     </ul>
