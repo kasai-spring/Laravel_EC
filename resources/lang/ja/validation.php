@@ -39,7 +39,7 @@ return [
     'digits_between'       => ':attributeは:min桁から:max桁の間で指定してください。',
     'dimensions'           => ':attributeの図形サイズが正しくありません。',
     'distinct'             => ':attributeには異なった値を指定してください。',
-    'email'                => ':attributeには、有効なメールアドレスを指定してください。',
+    'email'                => ':attributeには有効なメールアドレスを指定してください。',
     'exists'               => '選択された:attributeは正しくありません。',
     'file'                 => ':attributeにはファイルを指定してください。',
     'filled'               => ':attributeに値を指定してください。',
@@ -144,10 +144,9 @@ return [
     */
 
     'attributes' => [
-        'user_id' => 'ユーザーID',
+        'user_name' => 'ユーザー名',
         'email' => 'メールアドレス',
         'password' => 'パスワード',
-        're_password' => '再入力パスワード',
     ],
 
 ];

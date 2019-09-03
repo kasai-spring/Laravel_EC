@@ -24,7 +24,7 @@
         </label>
         <label>
             もう一度パスワードを入力してください:
-            <input type="password" name="re_password" placeholder="パスワード" required>
+            <input type="password" name="password_confirmation" placeholder="再入力パスワード" required>
         </label>
         <input type="submit" value="送信">
     </form>

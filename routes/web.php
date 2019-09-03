@@ -30,15 +30,14 @@ Route::get("error", function () {
     return view("error");
 })->name("error");
 
-Route::get("register", function () {
-    return view("register");
+Route::group(["prefix" => "register"],function(){
+    Route::get("/", function () {
+        return view("register");
+    });
+    Route::post("/", "UserRegisterController@confirm_back");
+    Route::post("confirm", "UserRegisterController@confirm");
+    Route::post("complete", "UserRegisterController@user_register");
 });
-
-Route::post("register", "UserRegisterController@confirm_back");
-
-Route::post("register/confirm", "UserRegisterController@confirm");
-
-Route::post("register/complete", "UserRegisterController@user_register");
 
 Route::get("mypage", "MyPageController@show_mypage")
     ->name("mypage");
@@ -51,6 +50,8 @@ Route::post("goods/add_cart/{good_id}", "CartController@add_cart")
 
 Route::get("cart", "CartController@show_cart");
 
-Route::post("settlement/address", "SettlementController@address_select");
+Route::group(["prefix" => "settlement", "middleware" => "normal_user"], function(){
+    Route::post("address", "SettlementController@address_select");
+    Route::post("confirm", "SettlementController@confirm");
+});
 
-Route::post("settlement/confirm", "SettlementController@confirm");

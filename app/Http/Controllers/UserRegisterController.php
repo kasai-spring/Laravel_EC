@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Users;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,10 +15,10 @@ class UserRegisterController extends Controller
         $validator = Validator::make($request->all(), [
             "user_name" => "required|string|between:4,16",
             "email" => "required|string|email:rfc|unique:users",
-            "password" => "required|string|between:6,32|regex:/[-~]/",
-            "re_password" => "required|string|same:password",
+            "password" => "required|string|between:6,32|regex:/[ -~]+/|confirmed",
         ], [
-            "password.not_regex" => ":attributeは半角英数字とハイフンとアンダーバーのみを入力してください",
+            "password.confirmed" => ":attributeと再入力パスワードが一致していません",
+            "password.regex" => ":attributeは半角英数字、半角記号のみを使用してください",
             "email.unique" => "この:attributeは既に登録されています。",
         ]);
 
@@ -61,7 +61,7 @@ class UserRegisterController extends Controller
         $raw_password = session()->pull("register_password");
         $password = Hash::make($raw_password);
         try {
-            $user_create = Users::create([
+            $user_create = User::create([
                 "user_name" => $user_name,
                 "email" => $email,
                 "password" => $password,
@@ -69,6 +69,7 @@ class UserRegisterController extends Controller
                 "updated_at" => now(),
                 "last_logined_at" => now(),
             ]);
+            session()->put(["login_id" => $user_create->id]);
         } catch (QueryException $e) {
             return redirect()
                 ->route("error");

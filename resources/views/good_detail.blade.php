@@ -9,12 +9,12 @@
     <h3>商品価格:{{$good_data->good_price}}円</h3>
     <h4>製造会社:{{$good_data->good_producer}}</h4>
     <h4>販売会社:{{$good_data->good_publisher}}</h4>
-    <h5>カテゴリー:{{$good_data->good_category}}</h5>
+    <h5>カテゴリー:{{$good_data->goodscategory->category_name}}</h5>
     <p>購入する</p>
     <form action="{{url("goods/add_cart/".$good_data->id)}}" method="post">
         @csrf
         <label>
-            <select name="count">
+            <select name="quantity">
                 <option value="1">1</option>
                 @for($i = 2;$i<=30;$i++)
                     <option value="{{$i}}">{{$i}}</option>

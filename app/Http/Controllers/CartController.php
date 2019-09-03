@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Goods;
-use App\Models\Users;
-use App\Models\Carts;
+use App\Models\Good;
+use App\Models\User;
+use App\Models\Cart;
 
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -19,7 +19,7 @@ class CartController extends Controller
 
     public function show_cart(){
         $login_id = session()->get("login_id");
-        $cart_data = Carts::where("user_id",$login_id)
+        $cart_data = Cart::where("user_id",$login_id)
             ->get();
 
 
@@ -29,23 +29,20 @@ class CartController extends Controller
     public function add_cart(Request $request, $good_id)
     {
         $validator = Validator::make($request->all(), [
-            "count" => "required|digits_between:1,30"
+            "quantity" => "required|digits_between:1,30"
         ]);
         $login_id = session()->get("login_id");
-        if ($validator->fails() || !Goods::find($good_id)->whereNull("deleted_at")->exists() ||
-            !Users::find($login_id)->whereNull("deleted_at")->exists()) {
+        if ($validator->fails() || !Good::find($good_id)->whereNull("deleted_at")->exists() ||
+            !User::find($login_id)->whereNull("deleted_at")->exists()) {
             return redirect()
                 ->route("error");
         }
 
-
         try {
-            Carts::create([
+            Cart::create([
                 "user_id" => $login_id,
                 "good_id" => $good_id,
-                "good_count" => $request->input("count"),
-                "created_at" => now(),
-                "updated_at" => now(),
+                "quantity" => $request->input("quantity"),
             ]);
         } catch (QueryException $e) {
             return redirect()

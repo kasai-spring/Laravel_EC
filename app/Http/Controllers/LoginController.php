@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\Users;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Hash;
@@ -22,7 +22,7 @@ class LoginController extends Controller
         $password = $request->input("password");
 
         if(!$validator->fails()){
-            $user = Users::where("email",$email)
+            $user = User::where("email",$email)
             ->whereNull("deleted_at")
             ->first();
 
@@ -30,7 +30,7 @@ class LoginController extends Controller
 
             if(Hash::check($password, $db_password)){
                 $user->timestamps = false;
-                $user->update(["last_logined_at" => now()]);
+                $user->fill(["last_logined_at" => now()])->save();
                 session()->put(["login_id" => $user->id]);
                 return redirect()
                     ->route("mypage");

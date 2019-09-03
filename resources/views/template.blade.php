@@ -17,7 +17,7 @@
         @endif
         <li><h2><a href="{{url("cart")}}">カート</a></h2></li>
         @if(session("login_id"))
-        <li><h2>マイページ</h2></li>
+        <li><a href="{{url("mypage")}}"><h2>マイページ</h2></a></li>
         <li><h2><a href="{{url("logout")}}">ログアウト</a></h2></li>
         @endif
     </ul>
