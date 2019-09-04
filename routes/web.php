@@ -14,6 +14,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use function foo\func;
 
 
 Route::get("/", "HomeController@index")->name("home");
@@ -42,16 +43,28 @@ Route::group(["prefix" => "register"],function(){
 Route::get("mypage", "MyPageController@show_mypage")
     ->name("mypage");
 
-Route::get("goods/detail/{good_id}", "GoodsController@show_detail")
-    ->where("good_id","[0-9]+");
+Route::get("goods/detail/{good_id}", "GoodsController@show_detail");
 
-Route::post("goods/add_cart/{good_id}", "CartController@add_cart")
-    ->where("good_id","[0-9]+");
+Route::post("goods/add_cart/{good_id}", "CartController@add_cart");
 
 Route::get("cart", "CartController@show_cart");
 
 Route::group(["prefix" => "settlement", "middleware" => "normal_user"], function(){
-    Route::post("address", "SettlementController@address_select");
+    Route::get("address", "SettlementController@address_select");
     Route::post("confirm", "SettlementController@confirm");
+    Route::post("process", "SettlementController@process");
+});
+
+Route::group(["prefix" => "admin", "middleware" => "admin"], function(){
+    Route::get("/", function(){
+        return view("admin");
+    });
+});
+
+Route::group(["prefix" => "developer", "middleware" => "admin"], function (){
+    Route::get("/", function(){
+       return view("developer");
+    });
+    Route::post("add_random_goods", "DeveloperController@add_random_goods");
 });
 

@@ -8,11 +8,18 @@ use Illuminate\Http\Request;
 class GoodsController extends Controller
 {
     public function show_detail(Request $request, $good_id){
-        $good_data = Good::where("id",$good_id)
+        if(!preg_match("/[0-9A-Za-z]+/", $good_id)){
+            return redirect()
+                ->route("error");
+        }
+        $good_data = Good::where("good_id",$good_id)
             ->whereNull("deleted_at")
             ->first();
-        $good_category_id = $good_data->good_category;
-        $relate_goods = Good::where("good_category",$good_category_id)
+        if($good_data == null){
+            return redirect()
+                ->route("home");
+        }
+        $relate_goods = Good::where("good_category",$good_data->good_category)
             ->whereNull("deleted_at")
             ->inRandomOrder()
             ->limit(8)

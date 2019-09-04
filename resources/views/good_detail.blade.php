@@ -11,7 +11,7 @@
     <h4>販売会社:{{$good_data->good_publisher}}</h4>
     <h5>カテゴリー:{{$good_data->goodscategory->category_name}}</h5>
     <p>購入する</p>
-    <form action="{{url("goods/add_cart/".$good_data->id)}}" method="post">
+    <form action="{{url("goods/add_cart/".$good_data->good_id)}}" method="post">
         @csrf
         <label>
             <select name="quantity">
@@ -27,10 +27,10 @@
     <h1>関連商品</h1>
 
     @foreach($relate_goods as $relate_good)
-        <a href="{{url("goods/detail/".$relate_good->id)}}">
+        <a href="{{url("goods/detail/".$relate_good->good_id)}}">
             <h2>{{$relate_good->good_name}}</h2>
             <h3>{{$relate_good->good_price}}</h3>
-            <h4>{{$relate_good->good_category}}</h4>
+            <h4>{{$good_data->goodscategory->category_name}}</h4>
         </a>
 
     @endforeach

@@ -18,7 +18,14 @@ class CreatePurchaseHistoriesTable extends Migration
             $table->unsignedBigInteger("user_id");
             $table->unsignedBigInteger("good_id");
             $table->integer("quantity");
+            $table->unsignedBigInteger("address_id");
+            $table->unsignedBigInteger("transaction_id");
             $table->timestamps();
+
+            $table->foreign("user_id")->references("id")->on("users");
+            $table->foreign("good_id")->references("id")->on("goods");
+            $table->foreign("address_id")->references("id")->on("addresses");
+            $table->foreign("transaction_id")->references("id")->on("transactions");
         });
     }
 

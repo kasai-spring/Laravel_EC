@@ -4,14 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-
 /**
  * App\Models\Cart
  *
  * @property int $id
  * @property int $user_id
  * @property int $good_id
- * @property int $good_count
+ * @property int $quantity
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Good $good
@@ -20,9 +19,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Cart newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Cart query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Cart whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Cart whereGoodCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Cart whereGoodId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Cart whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Cart whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Cart whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Cart whereUserId($value)
  * @mixin \Eloquent
@@ -32,10 +31,7 @@ class Cart extends Model
     protected $guarded = [];
 
     public function user(){
-        return $this->belongsTo("App\Models\Users");
+        return $this->belongsTo("App\Models\User");
     }
 
-    public function good(){
-        return $this->belongsTo("App\Models\Goods");
-    }
 }

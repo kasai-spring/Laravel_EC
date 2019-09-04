@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\User;
+use App\Models\UserRole;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Hash;
@@ -32,6 +33,13 @@ class LoginController extends Controller
                 $user->timestamps = false;
                 $user->fill(["last_logined_at" => now()])->save();
                 session()->put(["login_id" => $user->id]);
+                $user_role = UserRole::where("user_id", $user->id)
+                    ->get();
+                foreach ($user_role as $role){//role id ごとに権限付与
+                    if($role->role_id == 1){
+                        session()->put(["Admin" => true]);
+                    }
+                }
                 return redirect()
                     ->route("mypage");
             }

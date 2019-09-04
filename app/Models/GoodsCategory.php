@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 
+
 /**
  * App\Models\GoodsCategory
  *
@@ -28,7 +29,7 @@ class GoodsCategory extends Model
     protected $guarded = [];
 
     public function goods(){
-        $this -> hasMany("App\Models\Goods");
+        $this -> hasMany("App\Models\Good");
     }
 
 }

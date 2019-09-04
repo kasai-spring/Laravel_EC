@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-
-
 /**
  * App\Models\User
  *
@@ -37,14 +35,14 @@ class User extends Model
     protected $guarded = [];
 
     public function carts(){
-        $this->hasMany("App\Models\Carts");
+        $this->hasMany("App\Models\Cart");
     }
 
     public function userroles(){
-        $this->hasMany("App\Models\UserRoles");
+        $this->hasMany("App\Models\UserRole");
     }
 
     public function addresses(){
-        $this->hasMany("App\Models\Addresses");
+        $this->hasMany("App\Models\Address");
     }
 }

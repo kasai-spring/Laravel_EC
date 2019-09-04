@@ -4,49 +4,135 @@ namespace App\Http\Controllers;
 
 use App\Models\Address;
 use App\Models\Cart;
+use App\Models\PurchaseHistory;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 class SettlementController extends Controller
 {
-    public function address_select(){
+    public function address_select()
+    {
         $login_id = session()->get("login_id");
-        $cart_data = Cart::where("user_id", $login_id)
-            ->get();
-        if(count($cart_data) == 0){
-            return redirect()
-                ->route("error");
+        if(Cart::where("user_id", $login_id)->doesntExist()){
+            return redirect(url("cart"));
         }
-        $address_data = Address::where("user_id",$login_id)
-            ->orderBy("created_at","desc")
+        $address_data = Address::where("user_id", $login_id)
+            ->orderBy("created_at", "desc")
             ->limit(3)
             ->get();
+        session()->put(["address_data" => $address_data]);
 
         return view("settlement_address", compact("address_data"));
     }
 
-    public function confirm(Request $request){
-        if($request->input("select_address") == 0){
-            $validator = Validator::make($request->all(),[
-
-            ]);
+    public function confirm(Request $request)
+    {
+        $select_address = $request->input("select_address");
+        $address_data = session()->pull("address_data");
+        switch ($request->input("payment")) {
+            case 1:
+                $payment_method = "クレジットカード";
+                break;
+            case 2:
+                $payment_method = "口座振替";
+                break;
+            case 3:
+                $payment_method = "代金引換";
+                break;
+            default:
+                return redirect()
+                    ->route("error");
         }
+        if ($select_address == 0) { //住所を入力した場合
+            $validator = Validator::make($request->all(), [
+                "postcode" => "required|digits:7",
+                "prefecture" => "required|string|between:3,4",
+                "city_street" => "required|string|between:4,25",
+                "building" => "present|string|between:1,25",
+                "addressee" => "required|string|between:2,16",
+            ]);
+            if ($validator->fails()) {
+                return redirect()
+                    ->back()
+                    ->withErrors($validator)
+                    ->withInput($request->all());
+            }
+            session()->put([
+                "address_postcode" => $request->input("postcode"),
+                "address_prefecture" => $request->input("prefecture"),
+                "address_city_street" => $request->input("city_street"),
+                "address_building" => $request->input("building"),
+                "address_addressee" => $request->input("addressee"),
+                "address_id" => 0,
+            ]);
+        } elseif ($select_address >= 1 || $select_address <= 3) {
+            $address = $address_data[$select_address - 1];
+            session()->put([
+                "address_postcode" => $address->postcode,
+                "address_prefecture" => $address->prefecture,
+                "address_city_street" => $address->city_street,
+                "address_building" => $address->building,
+                "address_addressee" => $address->addressee,
+                "address_id" => $address->id,
+            ]);
+        } else {
+            return redirect()
+                ->route("error");
+        }
+        session()->put(["payment_method" => $payment_method]);
         $login_id = session()->get("login_id");
-        $cart_data = Cart::where("user_id",$login_id)
+        $cart_data = Cart::where("user_id", $login_id)
             ->limit(30)
-            ->orderByDesc("updated_at")
+            ->oldest("carts.updated_at")
+            ->join("goods", "goods.good_id", "=", "carts.good_id")
+            ->whereNull("goods.deleted_at")
             ->get();
         session()->put(["cart_data" => $cart_data]);
-        Address::create([
-            "user_id" => $login_id,
-            "postcode" => $request->input("postcode"),
-            "prefecture" => $request->input("prefecture"),
-            "city_street" => $request->input("address"),
-            "building" => $request->input("building"),
-            "addressee" => $request->input("addressee")
-        ]);
 
-        return view("home");
+
+        return view("settlement_confirm");
+    }
+
+    public function process()
+    {
+        $payment_method = session()->pull("payment_method");
+        $cart_data = session()->pull("cart_data");
+        $address_id = session()->pull("address_id");
+        $login_id = session()->get("login_id");
+        if ($address_id == 0) {
+            $address = Address::create([
+                "user_id" => $login_id,
+                "postcode" => session()->pull("address_postcode"),
+                "prefecture" => session()->pull("address_prefecture"),
+                "city_street" => session()->pull("address_city_street"),
+                "building" => session()->pull("address_building"),
+                "addressee" => session()->pull("address_addressee")
+            ]);
+            $address_id = $address->id;
+        }
+
+        $transaction = Transaction::create([
+            "user_id" => $login_id,
+            "payment_method" => $payment_method,
+        ]);
+        $input_data = array();
+        foreach ($cart_data as $cart) {
+            $input_data[] = [
+                "user_id" => $login_id,
+                "good_id" => $cart->id,
+                "quantity" => $cart->quantity,
+                "address_id" => $address_id,
+                "transaction_id" => $transaction->id,
+                "created_at" => now(),
+                "updated_at" => now(),
+            ];
+        }
+        PurchaseHistory::insert($input_data);
+        Cart::where("user_id", $login_id)
+            ->delete();
+
+        return redirect()
+            ->route("home");
     }
 }

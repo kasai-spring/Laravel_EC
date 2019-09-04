@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 
+
 /**
  * App\Models\Good
  *
  * @property int $id
+ * @property string $good_id
  * @property string $good_name
  * @property string $good_producer
  * @property string $good_publisher
@@ -19,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Cart[] $carts
+ * @property-read int|null $carts_count
  * @property-read \App\Models\GoodsCategory $goodscategory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Good newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Good newQuery()
@@ -26,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Good whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Good whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Good whereGoodCategory($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Good whereGoodId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Good whereGoodName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Good whereGoodPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Good whereGoodProducer($value)
@@ -38,10 +42,6 @@ use Illuminate\Database\Eloquent\Model;
 class Good extends Model
 {
     protected $guarded = [];
-
-    public function carts(){
-        return $this->hasMany("App\Models\Carts");
-    }
 
     public function goodscategory(){
         return $this->belongsTo("App\Models\GoodsCategory", "good_category");

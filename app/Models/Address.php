@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;
 
-
 /**
  * App\Models\Address
  *
@@ -38,7 +37,7 @@ class Address extends Model
     protected $guarded = [];
 
     public function user(){
-        return $this->belongsTo("App\Models\Users");
+        return $this->belongsTo("App\Models\User");
     }
 
     public function setPostcodeAttribute($value)

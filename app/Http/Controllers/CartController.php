@@ -19,21 +19,24 @@ class CartController extends Controller
 
     public function show_cart(){
         $login_id = session()->get("login_id");
-        $cart_data = Cart::where("user_id",$login_id)
+        $cart_data = Cart::where("user_id", $login_id)
+            ->join("goods","goods.good_id","=","carts.good_id")
+            ->whereNull("goods.deleted_at")
             ->get();
-
 
         return view("cart", compact("cart_data"));
     }
 
     public function add_cart(Request $request, $good_id)
     {
+
         $validator = Validator::make($request->all(), [
-            "quantity" => "required|digits_between:1,30"
+            "quantity" => "required|numeric|between:1,30"
         ]);
         $login_id = session()->get("login_id");
-        if ($validator->fails() || !Good::find($good_id)->whereNull("deleted_at")->exists() ||
-            !User::find($login_id)->whereNull("deleted_at")->exists()) {
+        if ($validator->fails() || !Good::where("good_id",$good_id)->whereNull("deleted_at")->exists() ||
+            !User::find($login_id)->whereNull("deleted_at")->exists())
+        {
             return redirect()
                 ->route("error");
         }
@@ -46,7 +49,7 @@ class CartController extends Controller
             ]);
         } catch (QueryException $e) {
             return redirect()
-                ->route("error");
+                ->route("home");
         }
 
         return redirect()
