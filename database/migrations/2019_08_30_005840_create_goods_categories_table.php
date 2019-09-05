@@ -17,7 +17,6 @@ class CreateGoodsCategoriesTable extends Migration
             $table->bigIncrements('id');
             $table->string("category_name")->unique();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

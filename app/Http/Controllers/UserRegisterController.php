@@ -70,6 +70,17 @@ class UserRegisterController extends Controller
                 "last_logined_at" => now(),
             ]);
             session()->put(["login_id" => $user_create->id]);
+            $cart_json = \Cookie::get("cart_data");
+            setcookie("cart_data"); //cookie削除
+            $cart_data = json_decode($cart_json, true);
+            if (is_array($cart_data)) {
+                if (count($cart_data) > 0) {
+                    $cart_con = new CartController();
+                    if (!$cart_con->cookie_to_db($cart_data, $user_create->id)) {
+                        //todo フラッシュメッセージ
+                    };
+                }
+            }
         } catch (QueryException $e) {
             return redirect()
                 ->route("error");

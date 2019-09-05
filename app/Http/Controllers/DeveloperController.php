@@ -19,6 +19,7 @@ class DeveloperController extends Controller
                 "good_producer" => $this->makeRandStr(8)."工場",
                 "good_publisher" => $this->makeRandStr(8)."会社",
                 "good_price" => mt_rand(1, 100000),
+                "good_stock" => mt_rand(1,1000),
                 "picture_path" => "default.png",
                 "good_category" => mt_rand(1,5),
             ]);

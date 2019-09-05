@@ -16,6 +16,7 @@ class NormalUser
     public function handle($request, Closure $next)
     {
         if(!session()->has("login_id")){
+            session()->put(["login_pre_page" => url()->previous()]);
             return redirect()
             ->route("login");
         }

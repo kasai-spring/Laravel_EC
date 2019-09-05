@@ -7,4 +7,5 @@
     <h2>{{$user_data->id}}</h2>
     <h2>{{$user_data->user_name}}</h2>
     <h2>{{$user_data->email}}</h2>
+    <a href="{{url("mypage/history")}}">購入履歴</a>
 @endsection

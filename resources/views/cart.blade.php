@@ -3,6 +3,9 @@
 @section("title","カート")
 
 @section("main")
+    @if (session('flash_message'))
+        {{ session('flash_message') }}
+    @endif
     @isset($cart_data)
         @foreach($cart_data as $cart)
             <h2>商品名:{{$cart->good_name}}</h2>

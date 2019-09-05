@@ -40,14 +40,20 @@ Route::group(["prefix" => "register"],function(){
     Route::post("complete", "UserRegisterController@user_register");
 });
 
-Route::get("mypage", "MyPageController@show_mypage")
-    ->name("mypage");
+Route::group(["prefix" => "mypage", "middleware" => "normal_user"], function(){
+
+    Route::get("/", "MyPageController@show_mypage")
+        ->name("mypage");
+
+    Route::get("history", "MyPageController@show_purchase_history");
+});
 
 Route::get("goods/detail/{good_id}", "GoodsController@show_detail");
 
 Route::post("goods/add_cart/{good_id}", "CartController@add_cart");
 
-Route::get("cart", "CartController@show_cart");
+Route::get("cart", "CartController@show_cart")
+    ->name("cart");
 
 Route::group(["prefix" => "settlement", "middleware" => "normal_user"], function(){
     Route::get("address", "SettlementController@address_select");

@@ -9,11 +9,10 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $user_id
- * @property int $good_id
+ * @property string $good_id
  * @property int $quantity
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Good $good
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Cart newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Cart newQuery()
