@@ -10,18 +10,19 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class SettlementController extends Controller
 {
-    public function address_select()
+    public function post_address_select()
     {
         if (!preg_match("/.*cart\z/", url()->previous())) {
-            redirect()
-                ->route("error");
+            return redirect(url("cart"));
         }
         $login_id = session()->get("login_id");
+
         if (Cart::where("user_id", $login_id)->doesntExist()) {
-            return redirect(url("cart"));
+            return redirect()->back();
         }
         $address_data = Address::where("user_id", $login_id)
             ->latest("updated_at")
@@ -32,13 +33,33 @@ class SettlementController extends Controller
         return view("settlement_address", compact("address_data"));
     }
 
-    public function confirm(Request $request)
+    public function get_confirm()
+    {
+        if (!preg_match("/.*confirm\z/", url()->previous()) && !preg_match("/.*address\z/", url()->previous())) {
+            return redirect(url("cart"));
+        }
+        $login_id = session()->get("login_id");
+        $check_data = $this->stock_checker($login_id);
+        $cart_data = $check_data[0];
+        if(count($cart_data) == 0){
+            session()->flash("flash_message", "在庫切れのため商品を削除した結果、カート内に商品がなくなりました");
+            return redirect()->route("cart");
+        }
+        $cart_token = Str::random(32);
+        if($check_data[1]){
+            //todo フラッシュメッセージ
+        }
+        session()->put(["cart_data" => $cart_data, "cart_token" => $cart_token]);
+        return view("settlement_confirm");
+    }
+
+    public function post_confirm(Request $request)
     {
         if (!preg_match("/.*address\z/", url()->previous())) {
-            return redirect()
-                ->route("error");
+            return redirect(url("cart"));
         }
         $select_address = $request->input("select_address");
+        $login_id = session()->get("login_id");
         $address_data = session()->pull("address_data");
         switch ($request->input("payment")) {
             case 1:
@@ -78,6 +99,9 @@ class SettlementController extends Controller
             ]);
         } elseif ($select_address >= 1 || $select_address <= 3) {
             $address = $address_data[$select_address - 1];
+            if(Address::where("user_id", $login_id)->where("id", $address->id)->doesntExist()){
+                return redirect()->route("error");
+            }
             session()->put([
                 "address_postcode" => $address->postcode,
                 "address_prefecture" => $address->prefecture,
@@ -87,28 +111,18 @@ class SettlementController extends Controller
                 "address_id" => $address->id,
             ]);
         } else {
-            return redirect()
-                ->route("error");
+            return redirect()->route("error");
         }
         session()->put(["payment_method" => $payment_method]);
-        $login_id = session()->get("login_id");
-        $cart_data = Cart::where("user_id", $login_id)
-            ->limit(30)
-            ->join("goods", "goods.good_id", "=", "carts.good_id")
-            ->oldest("carts.updated_at")
-            ->whereNull("goods.deleted_at")
-            ->get();
-        session()->put(["cart_data" => $cart_data]);
 
-
-        return view("settlement_confirm");
+        return redirect("settlement/confirm");
     }
 
-    public function process()
+    public function process(Request $request)
     {
-        if (!preg_match("/.*confirm\z/", url()->previous())) {
-            return redirect()
-                ->route("error");
+        if ($request->input("cart_token") != session()->get("cart_token") ||
+            !preg_match("/.*confirm\z/", url()->previous())) {
+            return redirect(url("cart"));
         }
         try {
             DB::transaction(function () {
@@ -132,22 +146,16 @@ class SettlementController extends Controller
                     "payment_method" => $payment_method,
                 ]);
                 $cart_data = session()->get("cart_data");
-                foreach ($cart_data as $cart){
-                    $goods_id = Good::find($cart->id)
-                        ->withTrashed()
-                        ->lockForUpdate()
-                        ->first();
-                    dd($goods_id);
-                    if(is_null($goods_id)){
+                foreach ($cart_data as $cart) {
+                    $goods_id = Good::lockForUpdate()
+                        ->find($cart->id);
+                    if (is_null($goods_id)) {
                         throw new \Exception("NOT FOUND GOODS");
                     }
-                    if($cart->quantity > $goods_id->good_stock){
+                    if ($cart->quantity > $goods_id->good_stock) {
                         throw new \Exception("NO STOCK");
                     }
-                    //dump($goods_id);
-
-                    //decrement("good_stock", $cart->quantity);
-                    //dd($goods_id);
+                    $goods_id->decrement("good_stock", $cart->quantity);
                     PurchaseHistory::create([
                         "user_id" => $login_id,
                         "good_id" => $cart->id,
@@ -162,12 +170,41 @@ class SettlementController extends Controller
 
             });
         } catch (\Throwable $e) {
-            return redirect()
-                ->route("error");
+            return redirect()->back();
         }
 
         return redirect()
             ->route("home");
+    }
+
+    public function stock_checker($login_id){
+        $cart_data = Cart::where("user_id", $login_id)
+            ->join("goods", "goods.good_id", "=", "carts.good_id")
+            ->oldest("carts.created_at")
+            ->whereNull("goods.deleted_at")
+            ->get();
+        $quantity_change = false;
+        foreach ($cart_data as $key => $cart){
+            if($cart->good_stock < $cart->quantity){
+                $cart_q = Cart::where("user_id", $login_id)->where("good_id", $cart->good_id)
+                    ->first();
+                $quantity_change = true;
+                if($cart->good_stock == 0){
+                    unset($cart_data[$key]);
+                    try {
+                        $cart_q->delete();
+                    } catch (\Exception $e) {
+                        return redirect()
+                            ->route("error");
+                    }
+                }else{
+                    $cart->quantity = $cart->good_stock;
+                    $cart->save();
+                    $cart_q->fill(["quantity" => $cart->good_stock])->save();
+                }
+            }
+        }
+        return array($cart_data, $quantity_change);
     }
 
 }

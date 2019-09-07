@@ -11,6 +11,10 @@
 <header>
     <a id="site_logo" href="{{url("/")}}"><h1><?php echo config("app.name")?></h1></a>
     <ul id="header_bar">
+        <form action="{{url("goods/search")}}">
+            <input type="text" name="q">
+            <input type="submit" value="検索する">
+        </form>
         @if(session("login_id"))
             <li><a href="{{url("mypage")}}"><h2>マイページ</h2></a></li>
             <li><h2><a href="{{url("logout")}}">ログアウト</a></h2></li>

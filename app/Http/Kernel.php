@@ -63,6 +63,7 @@ class Kernel extends HttpKernel
 
         "normal_user" => \App\Http\Middleware\NormalUser::class,
         "admin" => \App\Http\Middleware\Admin::class,
+        "ajax" => \App\Http\Middleware\Ajax::class,
     ];
 
     /**

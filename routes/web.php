@@ -11,6 +11,7 @@
 |
 */
 
+use App\Http\Controllers\SettlementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -48,16 +49,27 @@ Route::group(["prefix" => "mypage", "middleware" => "normal_user"], function(){
     Route::get("history", "MyPageController@show_purchase_history");
 });
 
-Route::get("goods/detail/{good_id}", "GoodsController@show_detail");
+Route::group(["prefix" => "goods"], function(){
+    Route::get("search", "GoodsController@search_good");
 
-Route::post("goods/add_cart/{good_id}", "CartController@add_cart");
+    Route::get("detail/{good_id}", "GoodsController@show_detail");
 
-Route::get("cart", "CartController@show_cart")
-    ->name("cart");
+    Route::post("add_cart/{good_id}", "CartController@add_cart");
+});
+
+
+Route::group(["prefix" => "cart"], function(){
+    Route::get("/", "CartController@show_cart")
+        ->name("cart");
+    Route::post("change", "Ajax\CartController@change_cart")
+        ->middleware("ajax");
+});
+
 
 Route::group(["prefix" => "settlement", "middleware" => "normal_user"], function(){
-    Route::get("address", "SettlementController@address_select");
-    Route::post("confirm", "SettlementController@confirm");
+    Route::post("address", "SettlementController@post_address_select");
+    Route::get("confirm", "SettlementController@get_confirm");
+    Route::post("confirm", "SettlementController@post_confirm");
     Route::post("process", "SettlementController@process");
 });
 
@@ -73,4 +85,5 @@ Route::group(["prefix" => "developer", "middleware" => "admin"], function (){
     });
     Route::post("add_random_goods", "DeveloperController@add_random_goods");
 });
+
 

@@ -15,6 +15,7 @@
     <h3>宛先人:{{Session::get("address_addressee")}}</h3>
     <form action="{{url("settlement/process")}}" method="post">
         @csrf
+        <input type="hidden" name="cart_token" value="{{Session::get("cart_token")}}">
         <input type="submit" value="決済する">
     </form>
 
