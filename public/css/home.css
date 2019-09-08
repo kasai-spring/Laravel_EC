@@ -1,0 +1,22 @@
+#goods_box{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    width: 92%;
+    justify-content: space-around;
+    margin: 0 auto;
+
+}
+#good{
+    width:23%;
+}
+#good a{
+    text-decoration: none;
+    color: black;
+    font-family: sans-serif;
+}
+#good img{
+    width:100%;
+}
+

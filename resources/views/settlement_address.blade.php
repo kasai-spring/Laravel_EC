@@ -10,18 +10,25 @@
                 <h2>{{$error_message}}</h2>
             @endforeach
         @endisset
-        <label>
-            支払い方法:
-            <select name="payment">
-                <option value="1">クレジットカード</option>
-                <option value="2">口座振替</option>
-                <option value="3">代金引換</option>
-            </select>
-        </label>
+        <div>
+            <label>
+                クレジットカード
+                <input type="radio" name="payment" value="1">
+            </label>
+            <label>
+                口座振替
+                <input type="radio" name="payment" value="2">
+            </label>
+            <label>
+                代金引換
+                <input type="radio" name="payment" value="3">
+            </label>
+        </div>
         @foreach($address_data as $data)
             <label>
                 この住所を使用する
-                <input type="radio" name="select_address" value="{{$loop->iteration}}" onchange="address_select_checker()">
+                <input type="radio" name="select_address" value="{{$loop->iteration}}"
+                       onchange="address_select_checker()">
             </label>
             <h4>〒:{{$data->postcode}}</h4>
             <h4>{{$data->prefecture}}</h4>
@@ -30,7 +37,8 @@
             <h3>差出人:{{$data->addressee}}</h3>
         @endforeach
         <label>
-            <input type="radio" name="select_address" id="do_input" value="0" onchange="address_select_checker()" checked >
+            <input type="radio" name="select_address" id="do_input" value="0" onchange="address_select_checker()"
+                   checked>
             住所を入力する
         </label>
         <label>

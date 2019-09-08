@@ -2,24 +2,36 @@
 
 @section("title", "ログイン")
 
+@section("head")
+    <link rel="stylesheet" href="{{asset("css/l_r_form.css")}}">
+@endsection
+
 @section("main")
-    @isset($errors)
-        @foreach($errors->all() as $error_message)
-            <h2>{{$error_message}}</h2>
-        @endforeach
-    @endisset
-    <h3>ログイン</h3>
-    <form action="{{url("login")}}" method="post">
-        @csrf
-        <label>
-            メールアドレス:
-            <input type="text" value="{{old("email")}}" name="email" placeholder="メールアドレス" required>
-        </label>
-        <label>
-            パスワード:
-            <input type="password" value="" placeholder="パスワード" name="password" required>
-        </label>
-        <input type="submit" value="送信">
-    </form>
-    <a href="{{url('/register')}}">新規アカウントを作成する</a>
+
+    <div id="l_r_form">
+        <h3>ログイン</h3>
+        @isset($errors)
+            <div id="login_error">
+                @foreach($errors->all() as $error_message)
+                    <h2>{{$error_message}}</h2>
+                @endforeach
+            </div>
+        @endisset
+        <form action="{{url("login")}}" method="post">
+            @csrf
+            <label>
+                <input type="text" value="{{old("email")}}" class="l_r_form" name="email" placeholder="メールアドレス"
+                       required>
+                <i class="fa fa-envelope fa-lg fa-fw" aria-hidden="true"></i>
+            </label>
+            <label>
+                <input type="password" class="l_r_form" placeholder="パスワード" name="password" required>
+                <i class="fa fa-key fa-lg fa-fw" aria-hidden="true"></i>
+            </label>
+            <input type="submit" id="l_r_button" class="fas" value="&#xf101;">
+        </form>
+        <a href="{{url('')}}">パスワードを忘れた場合</a>
+    </div>
+
+
 @endsection

@@ -58,7 +58,7 @@ class LoginController extends Controller
         }
         return redirect()
             ->back()
-            ->withErrors(array("error_message" => "メールアドレスもしくはユーザーIDが間違っています"))
+            ->withErrors(array("error_message" => "メールアドレスもしくはパスワードが間違っています"))
             ->withInput($request->only(["email"]));
 
     }

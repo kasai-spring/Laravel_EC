@@ -13,7 +13,7 @@ class UserRegisterController extends Controller
     public function confirm(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "user_name" => "required|string|between:4,16",
+            "user_name" => "required|string|between:2,16",
             "email" => "required|string|email:rfc|unique:users",
             "password" => "required|string|between:6,32|regex:/[ -~]+/|confirmed",
         ], [
