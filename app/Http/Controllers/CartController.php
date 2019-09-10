@@ -44,8 +44,12 @@ class CartController extends Controller
                 ->join("goods", "goods.good_id", "=", "carts.good_id")
                 ->whereNull("goods.deleted_at")
                 ->get();
+            $total_price = 0;
+            foreach ($cart_data as $cart) {
+                $total_price += $cart->quantity * $cart->good_price;
+            }
 
-            return view("cart", compact("cart_data"));
+            return view("cart", compact("cart_data", "total_price"));
         }
         //ログインしてない場合
         $cart_json = \Cookie::get("cart_data");
@@ -57,18 +61,16 @@ class CartController extends Controller
         $cart_data = Good::whereNull("deleted_at")//(deleted_atがNull) && (cookieに入ってる商品IDのいずれかと一致する)
         ->where(function ($q) use ($cart_cookie) {
             foreach ($cart_cookie as $good => $quantity) {
-                if ($good === array_key_first($cart_cookie)) {
-                    $q->where("good_id", $good);
-                } else {
-                    $q->orWhere("good_id", $good);
-                }
+                $q->orWhere("good_id", $good);
             }
         })
             ->get();
+        $total_price = 0;
         foreach ($cart_data as $good) {//データベースから取得したデータに個数付与
             $good["quantity"] = $cart_cookie[$good->good_id];
+            $total_price += $cart_cookie[$good->good_id] * $good->good_price;
         }
-        return view("cart", compact("cart_data"));
+        return view("cart", compact("cart_data", "total_price"));
     }
 
     public function add_cart(Request $request, $good_id)

@@ -147,6 +147,11 @@ return [
         'user_name' => '名前',
         'email' => 'メールアドレス',
         'password' => 'パスワード',
+        'postcode' => '郵便番号',
+        'prefecture' => '都道府県',
+        'city_street' => '市町村番地',
+        'building' => '建物',
+        'addressee' => '差出人'
     ],
 
 ];

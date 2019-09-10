@@ -5,48 +5,65 @@
 @section("head")
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="{{asset("css/cart.css")}}">
 @endsection
 
 @section("main")
-    <div id="cart_message">
-    @if (session('flash_message'))
-        {{ session('flash_message') }}
-    @endif
+    <div id="cart_form">
+        <div id="cart_message">
+            @if (session('flash_message'))
+                <h2>{{ session('flash_message') }}</h2>
+            @endif
+        </div>
+        @isset($cart_data)
+            <div id="table_top_obj">
+                <h2>カート</h2>
+                <a href="{{url("settlement/address")}}" id="settlement">レジに進む</a>
+            </div>
+            <table class="good_table">
+                @foreach($cart_data as $cart)
+                    <tr id="{{$cart->good_id}}">
+                        <td>
+                            <div class="good">
+                                <img src="{{asset("storage/goods_images/".$cart->picture_path)}}"
+                                     alt="{{$cart->good_name}}のイメージ">
+                                <div class="good_detail">
+                                    <h2>{{$cart->good_name}}</h2>
+                                    <h3 id="good_price">{{$cart->good_price}}円</h3>
+                                </div>
+                                <label>
+                                    <select id="quantity" name="quantity" class="cart_quantity">
+                                        @for($i = 1;$i<=min($cart->good_stock, 30);$i++)
+                                            @if($i == $cart->quantity)
+                                                <option value="{{$i}}" selected>{{$i}}</option>
+                                            @else
+                                                <option value="{{$i}}">{{$i}}</option>
+                                            @endif
+                                        @endfor
+                                    </select>
+                                </label>
+                                <input type="button" class="fas cart_delete_button" value="&#xf1f8;">
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+                <tr>
+                    <th>
+                        <h2>合計金額:<span id="total_price">{{$total_price}}</span>円</h2>
+                    </th>
+                </tr>
+            </table>
+            @if(count($cart_data) == 0)
+                <div id="cart_message">
+                    <h2>カート内に商品がありません</h2>
+                </div>
+            @else
+                <div id="cart_message" class="no_cart" style="display: none">
+                    <h2>カート内に商品がありません</h2>
+                </div>
+            @endif
+        @endisset
     </div>
-    @isset($cart_data)
-        @foreach($cart_data as $cart)
-            <div class="good" id="{{$cart->good_id}}">
-                <h2>商品名:{{$cart->good_name}}</h2>
-                <h3>商品価格:{{$cart->good_price}}</h3>
-                <label>
-                    購入個数:
-                    <select name="quantity" class="cart_quantity">
-                        @for($i = 1;$i<=min($cart->good_stock, 30);$i++)
-                            @if($i == $cart->quantity)
-                                <option value="{{$i}}" selected>{{$i}}</option>
-                            @else
-                                <option value="{{$i}}" >{{$i}}</option>
-                            @endif
-                        @endfor
-                    </select>
-                </label>
-                <input type="button" class="cart_delete_button" value="削除する">
-            </div>
-        @endforeach
-        @if(count($cart_data) == 0)
-            <div id="no_cart_message">
-                <h3>カート内に商品がありません</h3>
-            </div>
-        @else
-            <div id="no_cart_message" style="display: none">
-                <h3>カート内に商品がありません</h3>
-            </div>
-            <form action="{{url("settlement/address")}}" id="settlement" method="post">
-                @csrf
-                <input type="submit" value="レジに進む">
-            </form>
-        @endif
-    @endisset
 
     <script src="{{asset("js/cart.js")}}" type="text/javascript"></script>
 @endsection

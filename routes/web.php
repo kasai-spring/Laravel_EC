@@ -68,9 +68,11 @@ Route::group(["prefix" => "cart"], function(){
 
 Route::group(["prefix" => "settlement", "middleware" => "normal_user"], function(){
     Route::post("address", "SettlementController@post_address_select");
+    Route::get("address", "SettlementController@get_address_select");
     Route::get("confirm", "SettlementController@get_confirm");
     Route::post("confirm", "SettlementController@post_confirm");
     Route::post("process", "SettlementController@process");
+    Route::get("complete", "SettlementController@complete");
 });
 
 Route::group(["prefix" => "admin", "middleware" => "admin"], function(){

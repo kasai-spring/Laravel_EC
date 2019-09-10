@@ -18,9 +18,9 @@ class CreateAddressesTable extends Migration
             $table->unsignedBigInteger("user_id");
             $table->string("postcode");
             $table->string("prefecture");
-            $table->string("city_street");
-            $table->string("building");
-            $table->string("addressee");
+            $table->string("city_street", 511);
+            $table->string("building", 511);
+            $table->string("addressee", 511);
             $table->timestamps();
 
             $table->foreign("user_id")->references("id")->on("users");

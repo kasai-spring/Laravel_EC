@@ -16,7 +16,7 @@ class SettlementController extends Controller
 {
     public function post_address_select()
     {
-        if (!preg_match("/.*cart\z/", url()->previous())) {
+        if (!preg_match("/.*confirm\z/", url()->previous())) {
             return redirect(url("cart"));
         }
         $login_id = session()->get("login_id");
@@ -29,6 +29,56 @@ class SettlementController extends Controller
             ->limit(3)
             ->get();
         session()->put(["address_data" => $address_data]);
+        switch (session()->pull("payment_method")) {
+            case "クレジットカード":
+                $payment_method = 1;
+                break;
+            case "口座振替":
+                $payment_method = 2;
+                break;
+            case "代金引換":
+                $payment_method = 3;
+                break;
+            default:
+                $payment_method = 1;
+        }
+        if (session()->pull("address_id") === 0) {
+            $postcode = session()->pull("address_postcode");
+            $prefecture = session()->pull("address_prefecture");
+            $city_street = session()->pull("address_city_street");
+            $building = session()->pull("address_building");
+            $addressee = session()->pull("address_addressee");
+        } else {
+            $postcode = null;
+            $prefecture = null;
+            $city_street = null;
+            $building = null;
+            $addressee = null;
+        }
+
+        $iteration_id = session()->pull("iteration_id");
+        session()->forget("address_id");
+
+        return view("settlement_address", compact("address_data", "payment_method", "postcode", "prefecture", "city_street", "building", "addressee", "iteration_id"));
+    }
+
+    public function get_address_select()
+    {
+        if (!preg_match("/.*address\z/", url()->previous()) && !preg_match("/.*cart\z/", url()->previous())) {
+            return redirect(url("cart"));
+        }
+
+        $login_id = session()->get("login_id");
+
+        if (Cart::where("user_id", $login_id)->doesntExist()) {
+            return redirect()->back();
+        }
+        $address_data = Address::where("user_id", $login_id)
+            ->latest("updated_at")
+            ->limit(3)
+            ->get();
+        session()->put(["address_data" => $address_data]);
+
 
         return view("settlement_address", compact("address_data"));
     }
@@ -41,15 +91,19 @@ class SettlementController extends Controller
         $login_id = session()->get("login_id");
         $check_data = $this->stock_checker($login_id);
         $cart_data = $check_data[0];
-        if(count($cart_data) == 0){
+        if (count($cart_data) == 0) {
             session()->flash("flash_message", "在庫切れのため商品を削除した結果、カート内に商品がなくなりました");
             return redirect()->route("cart");
         }
-        $cart_token = Str::random(32);
-        if($check_data[1]){
-            //todo フラッシュメッセージ
+        $total_price = 0;
+        foreach ($cart_data as $cart){
+            $total_price += $cart->quantity * $cart->good_price;
         }
-        session()->put(["cart_data" => $cart_data, "cart_token" => $cart_token]);
+        $cart_token = Str::random(32);
+        if ($check_data[1]) {
+            //todo フラッシュメッセージ(カートの商品を減らした)
+        }
+        session()->put(["cart_data" => $cart_data, "cart_token" => $cart_token, "total_price" => $total_price]);
         return view("settlement_confirm");
     }
 
@@ -60,7 +114,7 @@ class SettlementController extends Controller
         }
         $select_address = $request->input("select_address");
         $login_id = session()->get("login_id");
-        $address_data = session()->pull("address_data");
+        $address_data = session()->get("address_data");
         switch ($request->input("payment")) {
             case 1:
                 $payment_method = "クレジットカード";
@@ -79,8 +133,8 @@ class SettlementController extends Controller
             $validator = Validator::make($request->all(), [
                 "postcode" => "required|digits:7",
                 "prefecture" => "required|string|between:3,4",
-                "city_street" => "required|string|between:4,25",
-                "building" => "present|string|between:1,25",
+                "city_street" => "required|string|between:4,29",
+                "building" => "nullable|string|between:1,20",
                 "addressee" => "required|string|between:2,16",
             ]);
             if ($validator->fails()) {
@@ -96,10 +150,11 @@ class SettlementController extends Controller
                 "address_building" => $request->input("building"),
                 "address_addressee" => $request->input("addressee"),
                 "address_id" => 0,
+                "iteration_id" => $select_address,
             ]);
         } elseif ($select_address >= 1 || $select_address <= 3) {
             $address = $address_data[$select_address - 1];
-            if(Address::where("user_id", $login_id)->where("id", $address->id)->doesntExist()){
+            if (Address::where("user_id", $login_id)->where("id", $address->id)->doesntExist()) {
                 return redirect()->route("error");
             }
             session()->put([
@@ -109,6 +164,7 @@ class SettlementController extends Controller
                 "address_building" => $address->building,
                 "address_addressee" => $address->addressee,
                 "address_id" => $address->id,
+                "iteration_id" => $select_address,
             ]);
         } else {
             return redirect()->route("error");
@@ -173,23 +229,34 @@ class SettlementController extends Controller
             return redirect()->back();
         }
 
-        return redirect()
-            ->route("home");
+        session()->forget(["cart_token", "address_id", "address_postcode", "address_prefecture", "address_city_street", "address_building", "address_addressee", "payment_method"]);
+
+        return redirect(url("settlement/complete"));
     }
 
-    public function stock_checker($login_id){
+    public function complete()
+    {
+        if (!preg_match("/.*confirm\z/", url()->previous())) {
+            return redirect(url("home"));
+        }
+
+        return view("settlement_complete");
+    }
+
+    public function stock_checker($login_id)
+    {
         $cart_data = Cart::where("user_id", $login_id)
             ->join("goods", "goods.good_id", "=", "carts.good_id")
             ->oldest("carts.created_at")
             ->whereNull("goods.deleted_at")
             ->get();
         $quantity_change = false;
-        foreach ($cart_data as $key => $cart){
-            if($cart->good_stock < $cart->quantity){
+        foreach ($cart_data as $key => $cart) {
+            if ($cart->good_stock < $cart->quantity) {
                 $cart_q = Cart::where("user_id", $login_id)->where("good_id", $cart->good_id)
                     ->first();
                 $quantity_change = true;
-                if($cart->good_stock == 0){
+                if ($cart->good_stock == 0) {
                     unset($cart_data[$key]);
                     try {
                         $cart_q->delete();
@@ -197,7 +264,7 @@ class SettlementController extends Controller
                         return redirect()
                             ->route("error");
                     }
-                }else{
+                } else {
                     $cart->quantity = $cart->good_stock;
                     $cart->save();
                     $cart_q->fill(["quantity" => $cart->good_stock])->save();

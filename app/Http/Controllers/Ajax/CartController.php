@@ -31,11 +31,11 @@ class CartController extends Controller
             $good_id = $request->good_id;
             $quantity = $request->quantity;
             if($quantity < 0 || $quantity >30){
-                return response()->json(["result" => "error_over30"], 400);
+                return response()->json(["result" => "error"], 400);
             }
             $good = Good::where("good_id", $good_id)->first();
             if(is_null($good)){
-                return response()->json(["result" => "error_cantfindgood"], 400);
+                return response()->json(["result" => "error"], 400);
             }
 
             if (session()->has("login_id")) {
@@ -47,7 +47,7 @@ class CartController extends Controller
                     try {
                         $cart->delete();
                     } catch (\Exception $e) {
-                        return response()->json(["result" => "error_cant_delete"], 500);
+                        return response()->json(["result" => "error"], 500);
                     }
                     return response()->json(["result" => "success", "quantity" => 0, "stock" => 0]);
                 }elseif($good->good_stock < $quantity){
@@ -61,7 +61,7 @@ class CartController extends Controller
                 $cart_json = Cookie::get("cart_data");
                 $cart_data = json_decode($cart_json, true);
                 if(!array_key_exists($good_id, $cart_data)){
-                    return response()->json(["result" => "error_cant_find_key_cookie"], 400);
+                    return response()->json(["result" => "error"], 400);
                 }
                 if($good->good_stock == 0){
                     unset($cart_data[$good_id]);
@@ -82,7 +82,7 @@ class CartController extends Controller
 
             }
         } else {
-            return response()->json(["result" => "error_cant_mode"], 400);
+            return response()->json(["result" => "error"], 400);
         }
 
     }

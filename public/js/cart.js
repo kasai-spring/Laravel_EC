@@ -2,7 +2,7 @@ $(function () {
     check_goods();
 
     $(".cart_delete_button").on("click", function () {
-        const good_div = $(this).closest("div");
+        const good_div = $(this).closest("tr");
         let good_id = good_div.attr("id");
         $.ajax({
             headers: {
@@ -14,6 +14,7 @@ $(function () {
         })
             .done(function (data) {
                 good_div.remove();
+                total_price_calc();
                 check_goods();
             })
             .fail(function (data) {
@@ -24,7 +25,7 @@ $(function () {
     $(".cart_quantity").change(function () {
         const select = $(this);
         const quantity = select.val();
-        const good_div = select.closest("div");
+        const good_div = select.closest("tr");
         const good_id = good_div.attr("id");
 
 
@@ -43,7 +44,6 @@ $(function () {
                 if(now_quantity === 0){
                     good_div.remove();
                     check_goods();
-                    $("#cart_message").html("<h3>在庫切れのためカートから削除しました</h3>")
                 }else if(before_stock < now_stock){
                     for(let i = before_stock + 1; i<=now_stock; i++){
                         select.append($("<option>").html(i).val(i));
@@ -54,6 +54,7 @@ $(function () {
                         select.children().last().remove();
                     }
                 }
+                total_price_calc();
             })
             // Ajaxリクエストが失敗した場合
             .fail(function (data) {
@@ -66,7 +67,18 @@ function check_goods() {
     if ($("div").hasClass("good")) {
         $("#settlement").show();
     } else {
-        $("#settlement").hide();
-        $("#no_cart_message").show();
+        $(".good_table").hide();
+        $("#table_top_obj").hide();
+        $(".no_cart").show();
     }
+}
+
+function total_price_calc(){
+    let total_price = 0;
+    $(".good").each(function(){
+        const good_price = Number($(this).find("#good_price").text().replace("円",""));
+        const quantity = Number($(this).find("#quantity").val());
+        total_price += good_price * quantity;
+    });
+    $("#total_price").text(total_price);
 }
