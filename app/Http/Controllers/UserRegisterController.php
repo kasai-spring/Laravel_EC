@@ -13,7 +13,7 @@ class UserRegisterController extends Controller
     public function confirm(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "user_name" => "required|string|between:2,16",
+            "user_name" => "required|string|between:2,8",
             "email" => "required|string|email:rfc|unique:users",
             "password" => "required|string|between:6,32|regex:/[ -~]+/|confirmed",
         ], [
@@ -69,7 +69,7 @@ class UserRegisterController extends Controller
                 "updated_at" => now(),
                 "last_logined_at" => now(),
             ]);
-            session()->put(["login_id" => $user_create->id]);
+            session()->put(["login_id" => $user_create->id, "login_name" => $user_create -> user_name]);
             $cart_json = \Cookie::get("cart_data");
             setcookie("cart_data"); //cookie削除
             $cart_data = json_decode($cart_json, true);

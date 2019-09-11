@@ -26,6 +26,15 @@
     padding: 1vh 0;
 }
 
+#l_r_form #login_message h2 {
+    text-align: center;
+    font-weight: normal;
+    color: green;
+    background-color: #8BC58B;
+    border-radius: 5px;
+    padding: 1vh 0;
+}
+
 #l_r_form form {
     display: flex;
     display: -webkit-flex;
@@ -152,6 +161,11 @@
 #l_r_form h2 {
     font-size: 3vmin;
     font-weight: normal;
+}
+
+#l_r_form h4{
+    font-weight: normal;
+    font-size: 2.5vmin;
 }
 
 #confirm_form{

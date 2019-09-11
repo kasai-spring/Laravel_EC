@@ -11,6 +11,7 @@
 |
 */
 
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SettlementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,11 +21,25 @@ use function foo\func;
 
 Route::get("/", "HomeController@index")->name("home");
 
-Route::get("login", function (){
-    return view("login");
-})->name("login");
+Route::group(["prefix" => "login", "middleware" => "guest"], function(){
+    Route::get("/", function(){
+        return view("login");
+    })->name("login");
 
-Route::post("login", "LoginController@login");
+    Route::post("/", "LoginController@login");
+
+    Route::get("forget", function (){
+        return view("password_forget");
+    });
+
+    Route::post("forget", "LoginController@forget_password");
+
+    Route::get("forget/{reset_token}", "LoginController@show_reset_password");
+
+    Route::post("forget/reset", "LoginController@reset_password");
+
+    Route::get("forget_mail_send", "LoginController@send_forget_mail");
+});
 
 Route::get("logout", "LoginController@logout");
 
@@ -32,7 +47,7 @@ Route::get("error", function () {
     return view("error");
 })->name("error");
 
-Route::group(["prefix" => "register"],function(){
+Route::group(["prefix" => "register", "middleware" => "guest"],function(){
     Route::get("/", function () {
         return view("register");
     });
@@ -41,12 +56,13 @@ Route::group(["prefix" => "register"],function(){
     Route::post("complete", "UserRegisterController@user_register");
 });
 
-Route::group(["prefix" => "mypage", "middleware" => "normal_user"], function(){
+Route::group(["prefix" => "account", "middleware" => "normal_user"], function(){
 
     Route::get("/", "MyPageController@show_mypage")
         ->name("mypage");
 
     Route::get("history", "MyPageController@show_purchase_history");
+
 });
 
 Route::group(["prefix" => "goods"], function(){

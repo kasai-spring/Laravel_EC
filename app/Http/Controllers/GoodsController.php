@@ -33,9 +33,10 @@ class GoodsController extends Controller
     public function search_good(Request $request){
         $validator = Validator::make($request->all(), [
             "q" => "nullable|string|max:32",
-            "category" => "nullable|integer|exists:goods_categories,id",
+            "category" => "nullable|integer",
             "sort" => "nullable|integer|between:0,3"
         ]);
+
         $sort = $request->input("sort");
         if(is_null($sort)){
             $sort = 0;

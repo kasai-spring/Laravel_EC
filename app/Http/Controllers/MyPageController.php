@@ -24,6 +24,11 @@ class MyPageController extends Controller
         foreach ($transaction_data as $item){//トランザクションIDごとに履歴をまとめる
             $history_data[$item->id] = PurchaseHistory::where("transaction_id",$item->id)
                 ->get();
+            $total_price = 0;
+            foreach ($history_data[$item->id] as $good){
+                $total_price += $good->quantity * $good->good->good_price;
+            }
+            $item["total_price"] = $total_price;
         }
         return view("purchase_history", compact("transaction_data", "history_data"));
 

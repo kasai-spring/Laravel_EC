@@ -8,6 +8,7 @@
     <link href="https://use.fontawesome.com/releases/v5.10.2/css/all.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Pacifico&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=M+PLUS+1p&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 @yield("head")
 <body>
 <header>
@@ -20,15 +21,24 @@
     </div>
     <ul id="header_bar">
         <li><h2><a href="{{url("cart")}}">カート</a></h2></li>
+        @if(session("Admin"))
+            <li><h2><a href="{{url("admin")}}">管理者</a></h2></li>
+        @endif
         @if(session("login_id"))
-            <li><h2><a href="{{url("mypage")}}">マイページ</a></h2></li>
-            <li><h2><a href="{{url("logout")}}">ログアウト</a></h2></li>
+            <div id="header_mypage">
+                <input type="checkbox" id="mypage_check" class="pull_down_menu_check">
+                <label for="mypage_check" class="pull_down_menu_label" id="header_mypage_label"><h2>{{Session::get("login_name")}} <i
+                            class="far fa-caret-square-down"></i><i class="far fa-caret-square-up" style="display: none"></i></h2></label>
+                <div id="header_mypage_menu" class="pull_down_menu">
+                    <ul>
+                        <li><h2><a href="{{url("account/history")}}">購入履歴</a></h2></li>
+                        <li><h2><a href="{{url("logout")}}">ログアウト</a></h2></li>
+                    </ul>
+                </div>
+            </div>
         @else
             <li><h2><a href="{{url("register")}}">登録</a></h2></li>
             <li><h2><a href="{{url("login")}}">ログイン</a></h2></li>
-        @endif
-        @if(session("Admin"))
-            <li><h2><a href="{{url("admin")}}">管理者ページ</a></h2></li>
         @endif
     </ul>
     @yield("header")

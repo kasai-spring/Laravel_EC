@@ -1,0 +1,85 @@
+#history_form{
+    width: 70%;
+    margin:5vh auto 0;
+}
+
+#no_history_info h2 {
+    text-align: center;
+    font-weight: normal;
+    color: red;
+    background-color: #FEE9ED;
+    border-radius: 5px;
+    padding: 1vh 0;
+}
+
+#history_form .pull_down_menu{
+    display: none;
+}
+
+#history_form .fa-caret-square-up{
+    display: none;
+}
+
+#transaction{
+    width: 100%;
+    margin:1vh 0;
+}
+
+#transaction .pull_down_menu_check{
+    display: none;
+}
+
+#transaction label{
+    width: 100%;
+    height: 5vh;
+    line-height: 5vh;
+    font-size: 3vmin;
+    background-color: #A6A6A6;
+    display: flex;
+    display: -webkit-flex;
+    justify-content: space-between;
+    padding: 0 3vw;
+}
+
+#transaction table{
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    background-color: #E0E0E0;
+}
+
+#transaction table th{
+    padding: 10px 0;
+    text-align: center;
+}
+
+#transaction table tr:nth-child(odd){
+    background-color: #CACACA;
+}
+
+.history_good{
+    height:15vh;
+}
+
+.history_good td{
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    display: -webkit-flex;
+    justify-content: space-between;
+    height:15vh;
+    line-height: 15vh;
+    padding: 10px 0;
+}
+
+.history_good td img{
+    height: 95%;
+    width: auto;
+}
+
+.history_good td a{
+    color: black;
+    text-decoration: none;
+    font-size: 4vmin;
+}
+

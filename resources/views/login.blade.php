@@ -17,11 +17,16 @@
                 @endforeach
             </div>
         @endisset
+        @if (session('flash_message'))
+            <div id="login_message">
+                <h2>{{ session('flash_message') }}</h2>
+            </div>
+        @endif
         <form action="{{url("login")}}" method="post">
             @csrf
             <label>
                 <input type="text" value="{{old("email")}}" class="l_r_form" name="email" placeholder="メールアドレス"
-                       required>
+                       required autofocus>
                 <i class="fa fa-envelope fa-lg fa-fw" aria-hidden="true"></i>
             </label>
             <label>
@@ -30,7 +35,7 @@
             </label>
             <input type="submit" id="l_r_button" class="fas" value="&#xf101;">
         </form>
-        <a href="{{url('')}}">パスワードを忘れた場合</a>
+        <a href="{{url("login/forget")}}">パスワードを忘れた場合</a>
     </div>
 
 
