@@ -45,8 +45,12 @@
 </header>
 <main>
     @yield("main")
+    <div id="footer_space"></div>
 </main>
 <footer>
+    <ul>
+        <li><h2><a href="{{url("inquiry")}}">お問い合わせ</a></h2></li>
+    </ul>
     @yield("footer")
 </footer>
 <script src="{{ asset('js/template.js') }}" type="text/javascript"></script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Mail\PasswordForget;
+use App\Models\RememberUser;
 use App\Models\ResetPassword;
 use App\Models\User;
 use App\Models\UserRole;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\CartController;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -19,6 +21,18 @@ use Illuminate\Support\Str;
 
 class LoginController extends Controller
 {
+    public function show_login()
+    {
+        $email = null;
+        if (Cookie::has("remember")) {
+            $token = Cookie::get("remember");
+            $remember = RememberUser::where("token", $token)->where("expired_at", ">=", Carbon::now())->first();
+            if (!is_null($remember)) {
+                $email = $remember->user->email;
+            }
+        }
+        return view("login", compact("email"));
+    }
 
     public function login(Request $request)
     {
@@ -40,6 +54,25 @@ class LoginController extends Controller
                 $user->timestamps = false;
                 $user->fill(["last_logined_at" => now()])->save();
                 session()->put(["login_id" => $user->id, "login_name" => $user->user_name]);
+                if (!is_null($request->input("remember_me"))) {
+                    $token = Cookie::get("remember");
+                    if(is_null($token) || RememberUser::where("token",$token)->where("user_id", $user->id)->doesntExist()){
+                        $token = Str::random(64);
+                        while (RememberUser::where("token", $token)->exists()) {
+                            $token = Str::random(64);
+                        }
+                    }
+                    RememberUser::updateOrCreate([
+                        "user_id" => $user->id,
+                        "token" => $token,], [
+                        "ip_address" => $request->ip(),
+                        "expired_at" => Carbon::now()->addMonth()
+                    ]);
+                    Cookie::queue("remember", $token, 43800, null, null, false, true);
+                } else {
+                    RememberUser::where("token", Cookie::get("remember"))->where("user_id", $user->id)->delete();
+                    setcookie("remember");
+                }
                 $user_role = UserRole::where("user_id", $user->id)
                     ->get();
                 foreach ($user_role as $role) {//role id ごとに権限付与
@@ -68,12 +101,13 @@ class LoginController extends Controller
 
     }
 
-    public function forget_password(Request $request){
+    public function forget_password(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             "email" => "required|string|email:rfc"
         ]);
 
-        if($validator -> fails()){
+        if ($validator->fails()) {
             return redirect()
                 ->back()
                 ->withErrors($validator)
@@ -82,9 +116,9 @@ class LoginController extends Controller
         $email = $request->input("email");
         $user = User::where("email", $email)
             ->first();
-        if(!is_null($user)){
+        if (!is_null($user)) {
             $token = Str::random(60);
-            while(ResetPassword::where("token", $token)->exists()){
+            while (ResetPassword::where("token", $token)->exists()) {
                 $token = Str::random(60);
             }
             ResetPassword::create([
@@ -98,7 +132,8 @@ class LoginController extends Controller
         return redirect("login/forget_mail_send");
     }
 
-    public function send_forget_mail(){
+    public function send_forget_mail()
+    {
         if (!preg_match("/.*forget\z/", url()->previous())) {
             return redirect(url("home"));
         }
@@ -106,10 +141,11 @@ class LoginController extends Controller
         return view("password_forget_send");
     }
 
-    public function show_reset_password($reset_token){
+    public function show_reset_password($reset_token)
+    {
         $reset = ResetPassword::where("token", $reset_token)
             ->first();
-        if(is_null($reset) || Carbon::now()->gt($reset->expired_at)){
+        if (is_null($reset) || Carbon::now()->gt($reset->expired_at)) {
             return redirect()
                 ->route("error");
         }
@@ -117,7 +153,8 @@ class LoginController extends Controller
         return view("password_reset");
     }
 
-    public function reset_password(Request $request){
+    public function reset_password(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             "email" => "required|string|email:rfc",
             "password" => "required|string|between:6,32|regex:/[ -~]+/|confirmed",
@@ -125,20 +162,20 @@ class LoginController extends Controller
             "password.confirmed" => ":attributeと再入力パスワードが一致していません",
             "password.regex" => ":attributeは半角英数字、半角記号のみを使用してください",
         ]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             return redirect()
                 ->back()
                 ->withInput()
                 ->withErrors($validator);
         }
         $user_id = session()->get("reset_password_id");
-        if(is_null($user_id)){
+        if (is_null($user_id)) {
             return redirect()
                 ->route("error");
         }
         $email = $request->input("email");
         $user = User::find($user_id);
-        if($email != $user->email){
+        if ($email != $user->email) {
             //回数制限つけたほうがいいかも...?
             return redirect()
                 ->route("error");
@@ -156,6 +193,11 @@ class LoginController extends Controller
     {
         session()->flush();
         session()->regenerate();
+        if (Cookie::has("remember")) {
+            $token = Cookie::get("remember");
+            RememberUser::where("token", $token)->delete();
+            setcookie("remember");
+        }
         return redirect()
             ->route("home");
     }

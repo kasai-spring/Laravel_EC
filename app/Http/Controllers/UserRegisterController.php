@@ -42,8 +42,6 @@ class UserRegisterController extends Controller
             return redirect()
                 ->route("error");
         }
-
-
     }
 
     public function confirm_back()

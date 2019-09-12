@@ -11,6 +11,7 @@
 |
 */
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SettlementController;
 use Illuminate\Http\Request;
@@ -22,9 +23,7 @@ use function foo\func;
 Route::get("/", "HomeController@index")->name("home");
 
 Route::group(["prefix" => "login", "middleware" => "guest"], function(){
-    Route::get("/", function(){
-        return view("login");
-    })->name("login");
+    Route::get("/", "LoginController@show_login")->name("login");
 
     Route::post("/", "LoginController@login");
 
@@ -103,5 +102,17 @@ Route::group(["prefix" => "developer", "middleware" => "admin"], function (){
     });
     Route::post("add_random_goods", "DeveloperController@add_random_goods");
 });
+
+Route::group(["prefix" => "inquiry"], function(){
+    Route::get("/", function (){
+        return view("inquiry");
+    });
+    Route::post("/", "HomeController@confirm_back");
+    Route::post("confirm", "HomeController@inquiry");
+    Route::get("complete", "HomeController@show_inquiry_complete");
+    Route::post("complete", "HomeController@inquiry_complete");
+});
+
+
 
 

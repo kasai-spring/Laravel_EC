@@ -53,7 +53,6 @@
 
 #l_r_form .l_r_form {
     font: 3vmin/4.5vmin sans-serif;
-    box-sizing: border-box;
     width: 100%;
     margin: 1vh 0;
     transition: 0.3s;
@@ -171,5 +170,103 @@
 #confirm_form{
     -webkit-flex-direction: row !important;
     flex-direction: row !important;
+}
 
+#l_r_form #login_remember_check{
+    display: none;
+}
+
+#l_r_form #login_remember{
+    font-size:2vmin;
+    display:inline-block;
+    padding-left:2vw;
+    cursor:pointer;
+    height:3vh;
+    line-height:3vh;
+    position:relative;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+#l_r_form #login_remember:before{
+    content:"";
+    display:block;
+    width:2vmin;
+    height:2vmin;
+    border:solid 3px #555;
+    box-sizing:border-box;
+    position:absolute;
+    left:0;
+    top:0.4vh;
+    transition:0.1s ease-in-out;
+}
+
+#l_r_form #login_remember_check:checked + #login_remember:before{
+    transform:rotate(45deg);
+    border-top:0;
+    border-left:0;
+    width:0.75vw;
+    left:0.4vw;
+    top:0.2vh;
+    border-color:#3cb371;
+}
+
+#l_r_form #inquiry_header{
+    display: flex;
+    display: -webkit-flex;
+    justify-content: center;
+}
+
+#l_r_form #inquiry_header #select_option{
+    width: 30%;
+}
+
+#l_r_form #inquiry_header #subject_input{
+    height: 5vh;
+    line-height: 5vh;
+    width: 70%;
+    font-size: 2vmin;
+}
+
+#l_r_form #inquiry_header select{
+    width: 100%;
+    padding:1vh 1vw;
+    font-size: 2vmin;
+    border: 1px solid #1b2538;
+    border-radius: 4px;
+}
+
+#l_r_form #inquiry_header input{
+    width: 90%;
+    font: 3vmin/4.5vmin sans-serif;
+    transition: 0.3s;
+    border: 1px solid #1b2538;
+    border-radius: 4px;
+    outline: none;
+    padding: 0.5vh 0.5vw 0.5vh 0.5vw;
+}
+
+#l_r_form #inquiry_header input:focus{
+    outline: none;
+    box-shadow: 0 0 10px 2px rgba(128, 128, 128, 0.5);
+}
+
+#l_r_form textarea{
+    width: 100%;
+    border: 1px solid #1b2538;
+    border-radius: 4px;
+    outline: none;
+    font-size: 2vmin;
+}
+
+#l_r_form textarea:focus{
+    outline: none;
+    box-shadow: 0 0 10px 2px rgba(128, 128, 128, 0.5);
+}
+
+#l_r_form #inquiry_content_topic{
+    margin: 0;
+    font-size: 3vmin;
 }
