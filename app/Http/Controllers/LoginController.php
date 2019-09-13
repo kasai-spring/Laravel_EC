@@ -78,6 +78,8 @@ class LoginController extends Controller
                 foreach ($user_role as $role) {//role id ごとに権限付与
                     if ($role->role_id == 1) {
                         session()->put(["Admin" => true]);
+                    }else if($role->role_id == 2){
+                        session()->put(["PublisherController" => true]);
                     }
                 }
                 $cart_json = \Cookie::get("cart_data");

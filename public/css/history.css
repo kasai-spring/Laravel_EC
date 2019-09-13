@@ -39,6 +39,7 @@
     display: -webkit-flex;
     justify-content: space-between;
     padding: 0 3vw;
+    align-items: center;
 }
 
 #transaction table{

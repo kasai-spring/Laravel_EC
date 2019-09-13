@@ -19,21 +19,125 @@ class DatabaseSeeder extends Seeder
                 "created_at" => now(),
                 "updated_at" => now(),
                 "last_logined_at" => now(),
-            ],[
-               "email" => "test@test.com",
-               "password" => Hash::make("password"),
-               "user_name" => "test",
-               "created_at" => now(),
-               "updated_at" => now(),
-               "last_logined_at" => now(),
+            ], [
+                "email" => "test@test.com",
+                "password" => Hash::make("password"),
+                "user_name" => "test",
+                "created_at" => now(),
+                "updated_at" => now(),
+                "last_logined_at" => now(),
+            ], [
+                "email" => "publisher@test.com",
+                "password" => Hash::make("password"),
+                "user_name" => "pubg",
+                "created_at" => now(),
+                "updated_at" => now(),
+                "last_logined_at" => now(),
+            ], [
+                "email" => "publisher2@test.com",
+                "password" => Hash::make("password"),
+                "user_name" => "pubg2",
+                "created_at" => now(),
+                "updated_at" => now(),
+                "last_logined_at" => now(),
+            ], [
+                "email" => "publisher3@test.com",
+                "password" => Hash::make("password"),
+                "user_name" => "pubg3",
+                "created_at" => now(),
+                "updated_at" => now(),
+                "last_logined_at" => now(),
+            ], [
+                "email" => "publisher4@test.com",
+                "password" => Hash::make("password"),
+                "user_name" => "pubg4",
+                "created_at" => now(),
+                "updated_at" => now(),
+                "last_logined_at" => now(),
+            ], [
+                "email" => "publisher5@test.com",
+                "password" => Hash::make("password"),
+                "user_name" => "pubg5",
+                "created_at" => now(),
+                "updated_at" => now(),
+                "last_logined_at" => now(),
             ]]);
+        DB::table("publishers")
+            ->insert([[
+                "user_id" => 1,
+                "publisher_id" => "ASD74H7ZHJ48BJ4Y",
+                "publisher_name" => "Provisoriam",
+                "created_at" => now(),
+                "updated_at" => now(),
+            ],[
+                "user_id" => 3,
+                "publisher_id" => "BZX74H7NXZ48BJ4Y",
+                "publisher_name" => "A株式会社",
+                "created_at" => now(),
+                "updated_at" => now(),
+            ], [
+                "user_id" => 4,
+                "publisher_id" => "FLZDU2EKLJJHB4ZC",
+                "publisher_name" => "B株式会社",
+                "created_at" => now(),
+                "updated_at" => now(),
+            ], [
+                "user_id" => 5,
+                "publisher_id" => "LYT97J8B8FQDL57J",
+                "publisher_name" => "C株式会社",
+                "created_at" => now(),
+                "updated_at" => now(),
+            ], [
+                "user_id" => 6,
+                "publisher_id" => "BJYP8USA55VJB6GQ",
+                "publisher_name" => "D株式会社",
+                "created_at" => now(),
+                "updated_at" => now(),
+            ], [
+                "user_id" => 7,
+                "publisher_id" => "HVNM6DRA7QV3M45G",
+                "publisher_name" => "E株式会社",
+                "created_at" => now(),
+                "updated_at" => now(),
+            ]]);
+
         DB::table("user_roles")
-            ->insert([
+            ->insert([[
                 "role_id" => 1,
                 "user_id" => 1,
                 "created_at" => now(),
                 "updated_at" => now(),
-            ]);
+            ], [
+                "role_id" => 2,
+                "user_id" => 1,
+                "created_at" => now(),
+                "updated_at" => now(),
+            ], [
+                "role_id" => 2,
+                "user_id" => 3,
+                "created_at" => now(),
+                "updated_at" => now(),
+            ], [
+                "role_id" => 2,
+                "user_id" => 4,
+                "created_at" => now(),
+                "updated_at" => now(),
+            ], [
+                "role_id" => 2,
+                "user_id" => 5,
+                "created_at" => now(),
+                "updated_at" => now(),
+            ], [
+                "role_id" => 2,
+                "user_id" => 6,
+                "created_at" => now(),
+                "updated_at" => now(),
+            ], [
+                "role_id" => 7,
+                "user_id" => 2,
+                "created_at" => now(),
+                "updated_at" => now(),
+            ]]);
         DB::table("addresses")
             ->insert([[
                 "user_id" => "1",
@@ -44,7 +148,7 @@ class DatabaseSeeder extends Seeder
                 "building" => strval(Crypt::encrypt("")),
                 "created_at" => now(),
                 "updated_at" => now(),
-            ],[
+            ], [
                 "user_id" => "2",
                 "postcode" => strval(Crypt::encrypt("8694203")),
                 "prefecture" => strval(Crypt::encrypt("熊本県")),
@@ -95,19 +199,19 @@ class DatabaseSeeder extends Seeder
                     "category_name" => "DVD",
                     "created_at" => now(),
                     "updated_at" => now(),
-                ],[
+                ], [
                     "category_name" => "野菜",
                     "created_at" => now(),
                     "updated_at" => now(),
-                ],[
+                ], [
                     "category_name" => "果物",
                     "created_at" => now(),
                     "updated_at" => now(),
-                ],[
+                ], [
                     "category_name" => "GAME",
                     "created_at" => now(),
                     "updated_at" => now(),
-                ],[
+                ], [
                     "category_name" => "家電",
                     "created_at" => now(),
                     "updated_at" => now(),

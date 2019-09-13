@@ -167,6 +167,7 @@
     border-collapse: collapse;
     border-spacing: 0;
     background-color: #E0E0E0;
+    margin-bottom: 1vh;
 }
 
 #shipping_address table th,table td{

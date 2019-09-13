@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         "admin" => \App\Http\Middleware\Admin::class,
         "ajax" => \App\Http\Middleware\Ajax::class,
         "guest" => \App\Http\Middleware\Guest::class,
+        "publisher" => \App\Http\Middleware\Publisher::class,
     ];
 
     /**

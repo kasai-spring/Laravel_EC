@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $quantity
  * @property int $address_id
  * @property int $transaction_id
+ * @property int $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Good $good
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereGoodId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereTransactionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereUserId($value)
@@ -41,5 +43,9 @@ class PurchaseHistory extends Model
 
     public function good(){
         return $this->belongsTo("App\Models\Good");
+    }
+
+    public function address(){
+        return $this->belongsTo("App\Models\Address");
     }
 }

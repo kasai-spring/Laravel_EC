@@ -18,15 +18,16 @@ class CreateGoodsTable extends Migration
             $table->string("good_id");
             $table->string("good_name");
             $table->string("good_producer");
-            $table->string("good_publisher");
+            $table->unsignedBigInteger("good_publisher");
             $table->integer("good_price");
             $table->integer("good_stock");
             $table->string("picture_path");
-            $table->bigInteger("good_category")->unsigned();
+            $table->unsignedBigInteger("good_category");
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign("good_category")->references("id")->on("goods_categories");
+            $table->foreign("good_publisher")->references("id")->on("publishers");
         });
     }
 

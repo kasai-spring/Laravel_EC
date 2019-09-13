@@ -24,6 +24,9 @@
         @if(session("Admin"))
             <li><h2><a href="{{url("admin")}}">管理者</a></h2></li>
         @endif
+        @if(session("PublisherController"))
+            <li><h2><a href="{{url("publisher")}}">商品管理</a></h2></li>
+        @endif
         @if(session("login_id"))
             <div id="header_mypage">
                 <input type="checkbox" id="mypage_check" class="pull_down_menu_check">
@@ -32,6 +35,7 @@
                 <div id="header_mypage_menu" class="pull_down_menu">
                     <ul>
                         <li><h2><a href="{{url("account/history")}}">購入履歴</a></h2></li>
+                        <li><h2><a href="{{url("account/setting")}}">設定</a></h2></li>
                         <li><h2><a href="{{url("logout")}}">ログアウト</a></h2></li>
                     </ul>
                 </div>
@@ -45,7 +49,6 @@
 </header>
 <main>
     @yield("main")
-    <div id="footer_space"></div>
 </main>
 <footer>
     <ul>

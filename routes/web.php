@@ -59,9 +59,18 @@ Route::group(["prefix" => "account", "middleware" => "normal_user"], function(){
 
     Route::get("/", "MyPageController@show_mypage")
         ->name("mypage");
-
     Route::get("history", "MyPageController@show_purchase_history");
-
+    Route::get("setting", function (){
+        return view("setting");
+    });
+    Route::get("setting/name", "MyPageController@show_setting_name");
+    Route::post("setting/name", "MyPageController@setting_name");
+    Route::get("setting/email", "MyPageController@show_setting_email");
+    Route::post("setting/email", "MyPageController@setting_email");
+    Route::get("setting/password", function (){
+        return view("setting_password");
+    });
+    Route::post("setting/password", "MyPageController@setting_password");
 });
 
 Route::group(["prefix" => "goods"], function(){
@@ -111,6 +120,10 @@ Route::group(["prefix" => "inquiry"], function(){
     Route::post("confirm", "HomeController@inquiry");
     Route::get("complete", "HomeController@show_inquiry_complete");
     Route::post("complete", "HomeController@inquiry_complete");
+});
+
+Route::group(["prefix" => "publisher", "middleware" => "publisher"], function(){
+    Route::get("/", "PublisherController@show_publisher_page");
 });
 
 

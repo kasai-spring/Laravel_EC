@@ -27,7 +27,7 @@
             </tr>
             <tr>
                 <th>販売会社</th>
-                <td>{{$good_data->good_publisher}}</td>
+                <td>{{$good_data->publisher->publisher_name}}</td>
             </tr>
             <tr>
                 <th>カテゴリー</th>

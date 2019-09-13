@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
-
 /**
  * App\Models\Good
  *
@@ -14,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $good_id
  * @property string $good_name
  * @property string $good_producer
- * @property string $good_publisher
+ * @property int $good_publisher
  * @property int $good_price
  * @property int $good_stock
  * @property string $picture_path
@@ -23,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\GoodsCategory $goodscategory
+ * @property-read \App\Models\Publisher $publisher
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Good newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Good newQuery()
@@ -51,8 +51,14 @@ class Good extends Model
 
     protected $guarded = [];
 
-    public function goodscategory(){
+    public function goodscategory()
+    {
         return $this->belongsTo("App\Models\GoodsCategory", "good_category");
+    }
+
+    public function publisher()
+    {
+        return $this->belongsTo("App\Models\Publisher", "good_publisher");
     }
 
 

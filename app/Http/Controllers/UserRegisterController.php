@@ -14,7 +14,7 @@ class UserRegisterController extends Controller
     {
         $validator = Validator::make($request->all(), [
             "user_name" => "required|string|between:2,8",
-            "email" => "required|string|email:rfc|unique:users",
+            "email" => "required|string|email:rfc|unique:users|max:255",
             "password" => "required|string|between:6,32|regex:/[ -~]+/|confirmed",
         ], [
             "password.confirmed" => ":attributeと再入力パスワードが一致していません",
