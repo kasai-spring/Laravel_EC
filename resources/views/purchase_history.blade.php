@@ -28,7 +28,7 @@
                                     <img src="{{asset("storage/goods_images/".$history->good->picture_path)}}"
                                          alt="{{$history->good->good_name}}のイメージ">
                                     <a href="{{url("goods/detail/".$history->good->good_id)}}"><span>{{$history->good->good_name}}</span></a>
-                                    <span>購入個数:{{$history->quantity}}</span>
+                                    <span>価格:{{$history->good->good_price}}円 購入個数:{{$history->quantity}}</span>
                                 </td>
                             </tr>
                         @endforeach

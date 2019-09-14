@@ -43,14 +43,14 @@ class User extends Model
     protected $guarded = [];
 
     public function carts(){
-        $this->hasMany("App\Models\Cart");
+        return $this->hasMany("App\Models\Cart");
     }
 
     public function userroles(){
-        $this->hasMany("App\Models\UserRole");
+        return $this->hasMany("App\Models\UserRole");
     }
 
     public function addresses(){
-        $this->hasMany("App\Models\Address");
+        return $this->hasMany("App\Models\Address");
     }
 }

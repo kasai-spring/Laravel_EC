@@ -15,7 +15,7 @@ class Publisher
      */
     public function handle($request, Closure $next)
     {
-        if(!session()->has("PublisherController")){
+        if(!session()->has("Publisher")){
             return redirect()->route("login");
         }
         return $next($request);

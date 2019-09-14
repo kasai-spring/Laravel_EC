@@ -21,7 +21,7 @@ class CreateGoodsTable extends Migration
             $table->unsignedBigInteger("good_publisher");
             $table->integer("good_price");
             $table->integer("good_stock");
-            $table->string("picture_path");
+            $table->string("picture_path")->default("default.png");
             $table->unsignedBigInteger("good_category");
             $table->timestamps();
             $table->softDeletes();

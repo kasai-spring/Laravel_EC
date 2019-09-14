@@ -79,7 +79,7 @@ class LoginController extends Controller
                     if ($role->role_id == 1) {
                         session()->put(["Admin" => true]);
                     }else if($role->role_id == 2){
-                        session()->put(["PublisherController" => true]);
+                        session()->put(["Publisher" => true]);
                     }
                 }
                 $cart_json = \Cookie::get("cart_data");

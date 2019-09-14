@@ -100,9 +100,7 @@ Route::group(["prefix" => "settlement", "middleware" => "normal_user"], function
 });
 
 Route::group(["prefix" => "admin", "middleware" => "admin"], function(){
-    Route::get("/", function(){
-        return view("admin");
-    });
+    Route::get("/", "AdminController@show_admin_form");
 });
 
 Route::group(["prefix" => "developer", "middleware" => "admin"], function (){
@@ -124,6 +122,9 @@ Route::group(["prefix" => "inquiry"], function(){
 
 Route::group(["prefix" => "publisher", "middleware" => "publisher"], function(){
     Route::get("/", "PublisherController@show_publisher_page");
+    Route::post("/", "PublisherController@publisher_good_controller");
+    Route::get("edit/{good_id?}","PublisherController@show_good_edit");
+    Route::post("edit/{good_id?}","PublisherController@good_edit");
 });
 
 

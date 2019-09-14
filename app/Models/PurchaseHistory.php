@@ -42,7 +42,7 @@ class PurchaseHistory extends Model
     }
 
     public function good(){
-        return $this->belongsTo("App\Models\Good");
+        return $this->belongsTo("App\Models\Good")->withTrashed();
     }
 
     public function address(){

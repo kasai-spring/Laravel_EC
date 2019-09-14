@@ -24,7 +24,7 @@
         @if(session("Admin"))
             <li><h2><a href="{{url("admin")}}">管理者</a></h2></li>
         @endif
-        @if(session("PublisherController"))
+        @if(session("Publisher"))
             <li><h2><a href="{{url("publisher")}}">商品管理</a></h2></li>
         @endif
         @if(session("login_id"))
