@@ -101,6 +101,11 @@ Route::group(["prefix" => "settlement", "middleware" => "normal_user"], function
 
 Route::group(["prefix" => "admin", "middleware" => "admin"], function(){
     Route::get("/", "AdminController@show_admin_form");
+    Route::post("/", "AdminController@edit_from_form");
+    Route::get("user_edit/{user_id?}", "AdminController@show_edit_user");
+    Route::post("user_edit/{user_id?}","AdminController@edit_user");
+    Route::get("good_edit/{good_id?}", "AdminController@show_edit_good");
+    Route::post("good_edit/{good_id?}","AdminController@edit_good");
 });
 
 Route::group(["prefix" => "developer", "middleware" => "admin"], function (){

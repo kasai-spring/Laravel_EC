@@ -7,13 +7,6 @@
 @endsection
 
 @section("main")
-    @isset($errors)
-        <div id="login_error">
-            @foreach($errors->all() as $error_message)
-                <h2>{{$error_message}}</h2>
-            @endforeach
-        </div>
-    @endisset
     <div id="l_r_form">
         <h3>お問い合わせフォーム</h3>
         <form action="{{url("inquiry/confirm")}}" method="post">
@@ -45,15 +38,21 @@
                         <option value="3" @if(old("option",@$option ?: "") == 3) selected @endif>その他</option>
                     </select>
                 </label>
-                <label id="subject_input">
-                    件名
-                    <input type="text" name="subject" value="{{old("subject",@$subject ?: "")}}" required placeholder="10文字以内">
-                </label>
+                <div id="inquiry_subject">
+                    @if(!empty($errors->first("subject"))) <p
+                        class="form_error_message_subject">{{$errors->first("subject")}}</p> @endif
+                    <label id="subject_input">
+                        件名
+                        <input type="text" class="@if(!empty($errors->first("subject"))) has-error @endif" name="subject" value="{{old("subject",@$subject ?: "")}}" required placeholder="10文字以内">
+                    </label>
+                </div>
             </div>
-            <p id="inquiry_content_topic">内容(1000文字以内)</p>
-            <label>
 
-                <textarea name="content" cols="30" rows="35" required>{{old("content",@$content ?: "")}}</textarea>
+            <p id="inquiry_content_topic">内容(1000文字以内)</p>
+            @if(!empty($errors->first("content"))) <p
+                class="form_error_message_content">{{$errors->first("content")}}</p> @endif
+            <label>
+                <textarea name="content" class="@if(!empty($errors->first("subject"))) has-error @endif" cols="30" rows="35" required>{{old("content",@$content ?: "")}}</textarea>
             </label>
             <input type="submit" id="l_r_button" class="fas" value="&#xf101;">
         </form>

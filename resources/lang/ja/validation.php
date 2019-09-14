@@ -151,7 +151,14 @@ return [
         'prefecture' => '都道府県',
         'city_street' => '市町村番地',
         'building' => '建物',
-        'addressee' => '差出人'
+        'addressee' => '差出人',
+        'subject' => '件名',
+        'content' => '内容',
+        'company_name' => '会社名',
+        'good_name' => '商品名',
+        'good_price' => '価格',
+        'good_stock' => '在庫',
+        'good_producer' => '製造会社',
     ],
 
 ];

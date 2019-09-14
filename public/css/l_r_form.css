@@ -226,7 +226,7 @@
 #l_r_form #inquiry_header #subject_input{
     height: 5vh;
     line-height: 5vh;
-    width: 70%;
+    width: 100%;
     font-size: 2vmin;
 }
 
@@ -269,4 +269,22 @@
 #l_r_form #inquiry_content_topic{
     margin: 0;
     font-size: 3vmin;
+}
+
+#inquiry_subject{
+    width: 70%;
+    display: flex;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
+.form_error_message_subject{
+    margin:0 0 -1vh 3vw;
+    color:#c20c33;
+}
+
+.form_error_message_content{
+    margin:0 0 -1vh;
+    color:#c20c33;
 }

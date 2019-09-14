@@ -98,28 +98,42 @@
                 <table>
                     <tr>
                         <th>商品名</th>
-                        <td><input type="text" name="good_name" value="{{old("good_name")}}" placeholder="商品名" required>
+                        <td>
+                            @if(!empty($errors->first("good_name"))) <p
+                                class="form_error_message">{{$errors->first("good_name")}}</p> @endif
+                            <input type="text" name="good_name" class="text_input_form @if(!empty($errors->first("good_name"))) has-error @endif" value="{{old("good_name")}}" placeholder="商品名" required>
                         </td>
                     </tr>
                     <tr>
                         <th>製造会社</th>
-                        <td><input type="text" name="good_producer" value="{{old("good_producer")}}" placeholder="製造会社"
-                                   required></td>
+                        <td>
+                            @if(!empty($errors->first("good_producer"))) <p
+                                class="form_error_message">{{$errors->first("good_producer")}}</p> @endif
+                            <input type="text" name="good_producer" class="text_input_form @if(!empty($errors->first("good_producer"))) has-error @endif" value="{{old("good_producer")}}" placeholder="製造会社"
+                                   required>
+                        </td>
                     </tr>
                     <tr>
                         <th>価格</th>
-                        <td><input type="tel" name="good_price" value="{{old("good_price")}}" placeholder="価格" required>
+                        <td>
+                            @if(!empty($errors->first("good_price"))) <p
+                                class="form_error_message">{{$errors->first("good_price")}}</p> @endif
+                            <input type="tel" name="good_price" class="text_input_form @if(!empty($errors->first("good_price"))) has-error @endif" value="{{old("good_price")}}" placeholder="価格" required>
                         </td>
                     </tr>
                     <tr>
                         <th>在庫数</th>
-                        <td><input type="tel" name="good_stock" value="{{old("good_stock")}}" placeholder="在庫数"
-                                   required></td>
+                        <td>
+                            @if(!empty($errors->first("good_stock"))) <p
+                                class="form_error_message">{{$errors->first("good_stock")}}</p> @endif
+                            <input type="tel" name="good_stock" class="text_input_form @if(!empty($errors->first("good_stock"))) has-error @endif" value="{{old("good_stock")}}" placeholder="在庫数"
+                                   required>
+                        </td>
                     </tr>
                     <tr>
                         <th>カテゴリー</th>
                         <td>
-                            <select name="good_category" id="good_category">
+                            <select name="good_category" id="good_category" class="select_form">
                                 @foreach($category_data as $category)
                                     <option value="{{$category->id}}"
                                             @if(old("good_category") == $category->id) selected @endif>

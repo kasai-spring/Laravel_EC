@@ -17,13 +17,13 @@ class PublisherController extends Controller
         $publisher_id = Publisher::where("user_id", session()->get("login_id"))->first()->id;
         $sales_history = PurchaseHistory::whereHas("good", function ($q) use ($publisher_id) {
             $q->where("good_publisher", $publisher_id);
-        })->latest("created_at")->paginate(24,["*"],"history_page");
+        })->latest("created_at")->paginate(24, ["*"], "history_page");
         $mode = $request->mode;
         $select_mode = session()->pull("publisher_select_mode", 0);
-        if(!is_null($mode) && 0<=$mode && 2>= $mode){
+        if (!is_null($mode) && 0 <= $mode && 2 >= $mode) {
             $select_mode = $mode;
         }
-        $goods_data = Good::where("good_publisher", $publisher_id)->latest("created_at")->paginate(24,["*"],"goods_page");
+        $goods_data = Good::where("good_publisher", $publisher_id)->latest("created_at")->paginate(24, ["*"], "goods_page");
         $category_data = GoodsCategory::get();
         return view("publisher", compact("sales_history", "goods_data", "category_data", "select_mode"));
     }
@@ -88,7 +88,11 @@ class PublisherController extends Controller
             session()->put("publisher_select_mode", 1);
             return redirect("publisher");
         }
-        $good_data = Good::where("good_id", $good_id)->first();
+        $good_data = Good::where("good_id", $good_id)->where("good_publisher", session()->get("login_id"))->first();
+        if (is_null($good_data)) {
+            session()->put("publisher_select_mode", 1);
+            return redirect("publisher");
+        }
         return view("publisher_edit", compact("good_data"));
     }
 

@@ -23,12 +23,12 @@
             </div>
             <div>
                 <input id="good_edit_radio" class="sidebar_radio" type="radio" name="mode" value="2"
-                       onchange="onSidebarButtonChange()" @if($select_mode == 3) checked @endif>
+                       onchange="onSidebarButtonChange()" @if($select_mode == 2) checked @endif>
                 <label for="good_edit_radio"><h2>商品編集</h2> <i class="fas fa-angle-double-right"></i></label>
             </div>
             <div>
                 <input id="inquiry_check_radio" class="sidebar_radio" type="radio" name="mode" value="3"
-                       onchange="onSidebarButtonChange()" @if($select_mode == 4) checked @endif>
+                       onchange="onSidebarButtonChange()" @if($select_mode == 3) checked @endif>
                 <label for="inquiry_check_radio"><h2>問い合わせ</h2> <i class="fas fa-angle-double-right"></i></label>
             </div>
         </div>
@@ -47,7 +47,7 @@
                         <th>削除</th>
                     </tr>
                     @foreach($user_data as $user)
-                        <tr>
+                        <tr id="{{$user->email}}">
                             <td>{{$user->id}}</td>
                             <td>{{$user->email}}</td>
                             <td>{{$user->user_name}}</td>
@@ -55,44 +55,70 @@
                             <td>{{$user->last_logined_at}}</td>
                             <td>@if($user->Admin == 1) ○ @else × @endif</td>
                             <td>@if($user->Publisher == 1) ○ @else × @endif</td>
-                            <td><input type="button" value="編集"></td>
-                            <td><input type="button" value="削除"></td>
+                            <td><a href="{{url("admin/user_edit/".$user->id)}}"><input type="button" class="form_button edit_button" value="編集" @if($user->id == Session("login_id")) disabled @endif></a></td>
+                            <td><input type="button" class="user_delete_button form_button edit_button" value="削除" @if($user->id == Session("login_id")) disabled @endif></td>
                         </tr>
                     @endforeach
                 </table>
+                <div id="pagination">
+                    {{$user_data->appends(["mode" => 0])->links()}}
+                </div>
             </div>
             <div id="user_register_form">
                 <table>
                     <tr>
                         <th>メールアドレス</th>
-                        <td><input type="text"></td>
+                        <td>
+                            @if(!empty($errors->first("email"))) <p
+                                class="form_error_message">{{$errors->first("email")}}</p> @endif
+                            <input type="text" name="email" class="text_input_form @if(!empty($errors->first("email"))) has-error @endif" value="{{old("email")}}" placeholder="メールアドレス" required>
+                        </td>
                     </tr>
                     <tr>
                         <th>パスワード</th>
-                        <td><input type="password"></td>
+                        <td>
+                            @if(!empty($errors->first("password"))) <p
+                                class="form_error_message">{{$errors->first("password")}}</p> @endif
+                            <input type="password" name="password" class="text_input_form @if(!empty($errors->first("password"))) has-error @endif" placeholder="パスワード" required>
+                        </td>
                     </tr>
                     <tr>
                         <th>再入力用パスワード</th>
-                        <td><input type="password"></td>
+                        <td>
+                            <input type="password" name="password_confirmation" class="text_input_form @if(!empty($errors->first("password"))) has-error @endif" placeholder="パスワード" required>
+                        </td>
                     </tr>
                     <tr>
                         <th>ユーザー名</th>
-                        <td><input type="text"></td>
+                        <td>
+                            @if(!empty($errors->first("user_name"))) <p
+                                class="form_error_message">{{$errors->first("user_name")}}</p> @endif
+                            <input type="text" name="user_name" class="text_input_form @if(!empty($errors->first("user_name"))) has-error @endif" placeholder="ユーザー名" value="{{old("user_name")}}" required>
+                        </td>
                     </tr>
                     <tr>
                         <th>ユーザーの種類</th>
                         <td>
-                            <select name="" id="">
-                                <option value="0">通常ユーザー</option>
-                                <option value="1">パブリッシャー</option>
-                                <option value="2">管理者</option>
-                                <option value="3">管理者&パブリッシャー</option>
+                            <select id="user_role_edit" name="user_type" onchange="onUserRoleEditChange()" class="select_form">
+                                <option value="0" @if(old("user_type") == 0) selected @endif>通常ユーザー</option>
+                                <option value="1" @if(old("user_type") == 1) selected @endif>パブリッシャー</option>
+                                <option value="2" @if(old("user_type") == 2) selected @endif>管理者</option>
+                                <option value="3" @if(old("user_type") == 3) selected @endif>管理者&パブリッシャー</option>
                             </select>
                         </td>
                     </tr>
+                    <tr>
+                        <th>会社名</th>
+                        <td>
+                            @if(!empty($errors->first("company_name"))) <p
+                                class="form_error_message">{{$errors->first("company_name")}}</p> @endif
+                            <input type="text" id="company_name" name="company_name" required disabled class="text_input_form @if(!empty($errors->first("company_name"))) has-error @endif" value="{{old("company_name")}}" placeholder="会社名">
+                        </td>
+                    </tr>
                 </table>
+                <input type="submit" class="form_button submit_button" value="送信">
             </div>
-            <div id="good_edit_form">
+            <div id="edit_good_form">
                 <table>
                     <tr>
                         <th>商品ID</th>
@@ -107,7 +133,7 @@
                         <th>削除</th>
                     </tr>
                     @foreach($goods_data as $good)
-                        <tr>
+                        <tr id="{{$good->good_name}}">
                             <td>{{$good->good_id}}</td>
                             <td>{{$good->good_name}}</td>
                             <td>{{$good->good_producer}}</td>
@@ -116,11 +142,14 @@
                             <td>{{$good->good_stock}}</td>
                             <td>{{$good->goodscategory->category_name}}</td>
                             <td>{{$good->created_at}}</td>
-                            <td><input type="button" value="編集"></td>
-                            <td><input type="button" value="削除"></td>
+                            <td><a href="{{url("admin/good_edit/".$good->good_id)}}"><input type="button" value="編集" class="form_button edit_button"></a></td>
+                            <td><input type="button" id="{{$good->good_id}}" class="good_delete_button form_button edit_button" value="削除" ></td>
                         </tr>
                     @endforeach
                 </table>
+                <div id="pagination">
+                    {{$goods_data->appends(["mode" => 2])->links()}}
+                </div>
             </div>
             <div id="inquiry_check_form">
                 <table>
