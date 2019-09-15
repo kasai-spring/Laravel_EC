@@ -8,7 +8,7 @@ $(function () {
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: "http://127.0.0.1:8001/cart/change",
+            url: location.origin + "/cart/change",
             type: 'POST',
             data: {"mode": "delete", "good_id": good_id}
         })
@@ -18,7 +18,7 @@ $(function () {
                 check_goods();
             })
             .fail(function (data) {
-                location.reload();
+                // location.reload();
             });
     });
 
@@ -33,24 +33,24 @@ $(function () {
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: "http://127.0.0.1:8001/cart/change",
+            url: location.origin + "/cart/change",
             type: 'POST',
-            data: {"mode": "change", "good_id": good_id, "quantity":quantity}
+            data: {"mode": "change", "good_id": good_id, "quantity": quantity}
         })
             .done(function (data) {
                 const before_stock = Number(select.children().last().val());
                 const now_quantity = Number(data.quantity);
                 const now_stock = Number(data.stock);
-                if(now_quantity === 0){
+                if (now_quantity === 0) {
                     good_div.remove();
                     check_goods();
-                }else if(before_stock < now_stock){
-                    for(let i = before_stock + 1; i<=now_stock; i++){
+                } else if (before_stock < now_stock) {
+                    for (let i = before_stock + 1; i <= now_stock; i++) {
                         select.append($("<option>").html(i).val(i));
                     }
-                }else if(before_stock > now_stock){
+                } else if (before_stock > now_stock) {
                     select.val(now_quantity);
-                    while(Number(select.children().last().val()) > now_stock){
+                    while (Number(select.children().last().val()) > now_stock) {
                         select.children().last().remove();
                     }
                 }
@@ -73,10 +73,10 @@ function check_goods() {
     }
 }
 
-function total_price_calc(){
+function total_price_calc() {
     let total_price = 0;
-    $(".good").each(function(){
-        const good_price = Number($(this).find("#good_price").text().replace("円",""));
+    $(".good").each(function () {
+        const good_price = Number($(this).find("#good_price").text().replace("円", ""));
         const quantity = Number($(this).find("#quantity").val());
         total_price += good_price * quantity;
     });

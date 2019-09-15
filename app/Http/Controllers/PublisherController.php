@@ -67,10 +67,11 @@ class PublisherController extends Controller
                 $good_id = strtoupper(Str::random(16));
             }
             $publisher_id = Publisher::where("user_id", session()->get("login_id"))->first()->id;
-            $picture_path = null;
             if(!is_null($picture)){
                 $picture_path = $picture->store("public/goods_images");
                 $picture_path = preg_replace("/public\/goods_images\//","", $picture_path);
+            }else{
+                $picture_path = "default.png";
             }
             Good::create([
                 "good_id" => $good_id,

@@ -15,10 +15,19 @@
             @endif
         </div>
         @isset($cart_data)
-            <div id="table_top_obj">
-                <h2>カート</h2>
-                <a href="{{url("settlement/address")}}" id="settlement">レジに進む</a>
-            </div>
+            @if(count($cart_data) == 0)
+                <div id="cart_message">
+                    <h2>カート内に商品がありません</h2>
+                </div>
+            @else
+                <div id="cart_message" class="no_cart" style="display: none">
+                    <h2>カート内に商品がありません</h2>
+                </div>
+                <div id="table_top_obj">
+                    <h2>カート</h2>
+                    <a href="{{url("settlement/address")}}" id="settlement">レジに進む</a>
+                </div>
+            @endif
             <table class="good_table">
                 @foreach($cart_data as $cart)
                     <tr id="{{$cart->good_id}}">
@@ -46,21 +55,14 @@
                         </td>
                     </tr>
                 @endforeach
-                <tr>
-                    <th>
-                        <h2>合計金額:<span id="total_price">{{$total_price}}</span>円</h2>
-                    </th>
-                </tr>
+                @if(count($cart_data) != 0)
+                    <tr>
+                        <th>
+                            <h2>合計金額:<span id="total_price">{{$total_price}}</span>円</h2>
+                        </th>
+                    </tr>
+                @endif
             </table>
-            @if(count($cart_data) == 0)
-                <div id="cart_message">
-                    <h2>カート内に商品がありません</h2>
-                </div>
-            @else
-                <div id="cart_message" class="no_cart" style="display: none">
-                    <h2>カート内に商品がありません</h2>
-                </div>
-            @endif
         @endisset
     </div>
 

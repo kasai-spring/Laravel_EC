@@ -21,6 +21,7 @@ class MyPageController extends Controller
     public function show_purchase_history(){
         $login_id = session()->get("login_id");
         $transaction_data = Transaction::where("user_id", $login_id)
+            ->latest("created_at")
             ->paginate(5);
         $history_data = array();
         foreach ($transaction_data as $item){//トランザクションIDごとに履歴をまとめる
