@@ -56,8 +56,9 @@ class CartController extends Controller
         $cart_json = Cookie::get("cart_data");
         $cart_cookie = json_decode($cart_json, true);
         if (is_null($cart_cookie) || count($cart_cookie) == 0) {
+            $total_price = 0;
             $cart_data = array();
-            return view("cart", compact("cart_data"));
+            return view("cart", compact("cart_data","total_price"));
         }
         $cart_data = Good::whereNull("deleted_at")//(deleted_atがNull) && (cookieに入ってる商品IDのいずれかと一致する)
         ->where(function ($q) use ($cart_cookie) {
