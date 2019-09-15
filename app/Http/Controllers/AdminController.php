@@ -271,6 +271,7 @@ class AdminController extends Controller
             "good_price" => $good_price,
             "good_stock" => $good_stock,
             "good_category" => $good_category,
+            "picture_path" => $old_good->picture_path,
             "created_at" => $old_good->created_at,
             "updated_at" => now(),
         ]);

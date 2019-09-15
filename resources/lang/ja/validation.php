@@ -159,6 +159,7 @@ return [
         'good_price' => '価格',
         'good_stock' => '在庫',
         'good_producer' => '製造会社',
+        'good_picture' => '商品画像',
     ],
 
 ];

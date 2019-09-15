@@ -7,7 +7,7 @@
 @endsection
 
 @section("main")
-    <form action="{{url("publisher")}}" id="publisher_form" method="post">
+    <form action="{{url("publisher")}}" id="publisher_form" method="post" enctype="multipart/form-data">
         @csrf
         <div id="side_bar">
             <div>
@@ -141,6 +141,14 @@
                                     </option>
                                 @endforeach
                             </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>商品画像</th>
+                        <td>
+                            @if(!empty($errors->first("good_picture"))) <p
+                                class="form_error_message">{{$errors->first("good_picture")}}</p> @endif
+                            <input type="file" name="good_picture" accept='.jpg,.png'>
                         </td>
                     </tr>
                 </table>

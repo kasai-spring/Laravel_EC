@@ -7,6 +7,7 @@ use App\Models\GoodsCategory;
 use App\Models\Publisher;
 use App\Models\PurchaseHistory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -45,12 +46,14 @@ class PublisherController extends Controller
             session()->put("publisher_select_mode", 1);
             return redirect("publisher");
         } else if ($mode == 2) {
+            $picture = $request->file("good_picture", null);
             $validator = Validator::make($request->all(), [
                 "good_name" => "required|string|between:1,16",
                 "good_producer" => "required|string|between:1,16",
                 "good_price" => "required|integer|between:1,10000000",
                 "good_stock" => "required|integer|between:1,100000",
-                "good_category" => "required|integer|exists:goods_categories,id"
+                "good_category" => "required|integer|exists:goods_categories,id",
+                "good_picture" => "nullable|image|mimes:jpg,png,jpeg|max:1024"
             ]);
             if ($validator->fails()) {
                 session()->put("publisher_select_mode", 2);
@@ -64,6 +67,11 @@ class PublisherController extends Controller
                 $good_id = strtoupper(Str::random(16));
             }
             $publisher_id = Publisher::where("user_id", session()->get("login_id"))->first()->id;
+            $picture_path = null;
+            if(!is_null($picture)){
+                $picture_path = $picture->store("public/goods_images");
+                $picture_path = preg_replace("/public\/goods_images\//","", $picture_path);
+            }
             Good::create([
                 "good_id" => $good_id,
                 "good_name" => $request->input("good_name"),
@@ -72,6 +80,7 @@ class PublisherController extends Controller
                 "good_price" => $request->input("good_price"),
                 "good_stock" => $request->input("good_stock"),
                 "good_category" => $request->input("good_category"),
+                "picture_path" => $picture_path,
             ]);
             //todo 登録成功フラッシュメッセージ
             session()->put("publisher_select_mode", 1);
@@ -134,6 +143,7 @@ class PublisherController extends Controller
             "good_price" => $good_price,
             "good_stock" => $good_stock,
             "good_category" => $old_good->good_category,
+            "picture_path" => $old_good->picture_path,
             "created_at" => $old_good->created_at,
             "updated_at" => now(),
         ]);
