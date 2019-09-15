@@ -1,6 +1,11 @@
 # Laravel_EC
 基本的な機能を実装したECサイトです
 
+## 動作環境
+PHP 7.3  
+Laravel 5.8  
+DB: ローカル MariaDB 10.4.6 デプロイ版 MySQL 5.7 Community
+
 ## デプロイ版
 <http://provisoriam.site/>  
 
