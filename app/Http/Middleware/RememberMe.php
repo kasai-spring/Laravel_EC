@@ -46,9 +46,7 @@ class RememberMe
                 if (is_array($cart_data)) {
                     if (count($cart_data) > 0) {
                         $cart_con = new CartController();
-                        if (!$cart_con->cookie_to_db($cart_data, $user->id)) {
-                            //todo フラッシュメッセージ(CookieからDBに入れる際に在庫参照した際にカートの数量を調整した場合のメッセージ)
-                        };
+                        $cart_con->cookie_to_db($cart_data, $user->id);
                     }
                 }
             }

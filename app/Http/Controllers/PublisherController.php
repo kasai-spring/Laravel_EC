@@ -48,8 +48,8 @@ class PublisherController extends Controller
         } else if ($mode == 2) {
             $picture = $request->file("good_picture", null);
             $validator = Validator::make($request->all(), [
-                "good_name" => "required|string|between:1,16",
-                "good_producer" => "required|string|between:1,16",
+                "good_name" => "required|string|between:1,32",
+                "good_producer" => "required|string|between:1,32",
                 "good_price" => "required|integer|between:1,10000000",
                 "good_stock" => "required|integer|between:1,100000",
                 "good_category" => "required|integer|exists:goods_categories,id",
@@ -82,7 +82,6 @@ class PublisherController extends Controller
                 "good_category" => $request->input("good_category"),
                 "picture_path" => $picture_path,
             ]);
-            //todo 登録成功フラッシュメッセージ
             session()->put("publisher_select_mode", 1);
             return redirect(url("publisher"));
 
@@ -111,7 +110,7 @@ class PublisherController extends Controller
             return redirect("publisher");
         }
         $validator = Validator::make($request->all(), [
-            "good_name" => "required|string|between:1,16",
+            "good_name" => "required|string|between:1,32",
             "good_price" => "required|integer|between:1,10000000",
             "good_stock" => "required|integer|between:1,100000",
         ]);
@@ -156,7 +155,6 @@ class PublisherController extends Controller
         }
 
         session()->put("publisher_select_mode", 1);
-        //todo セッションメッセージ(編集成功)
         return redirect("publisher");
     }
 }

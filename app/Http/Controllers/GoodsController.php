@@ -23,7 +23,6 @@ class GoodsController extends Controller
                 ->route("home");
         }
         $relate_goods = Good::where("good_category", $good_data->good_category)
-            ->whereNull("deleted_at")
             ->inRandomOrder()
             ->limit(8)
             ->get();
@@ -74,6 +73,9 @@ class GoodsController extends Controller
                         ->orWhere("good_producer", "like", $word)
                         ->orWhereHas("publisher", function ($q) use ($word) {
                             $q->where("publisher_name", "like", $word);
+                        })
+                        ->orWhereHas("goodscategory", function($q) use ($word){
+                            $q->where("category_name", "like", $word);
                         });
                 });
             }

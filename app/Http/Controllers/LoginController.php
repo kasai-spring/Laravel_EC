@@ -9,7 +9,6 @@ use App\Models\ResetPassword;
 use App\Models\User;
 use App\Models\UserRole;
 use Illuminate\Http\Request;
-use App\Http\Controllers\CartController;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cookie;
@@ -45,18 +44,15 @@ class LoginController extends Controller
 
         if (!$validator->fails()) {
             $user = User::where("email", $email)
-                ->whereNull("deleted_at")
                 ->first();
-
             $db_password = $user->password;
-
             if (Hash::check($password, $db_password)) {
                 $user->timestamps = false;
                 $user->fill(["last_logined_at" => now()])->save();
                 session()->put(["login_id" => $user->id, "login_name" => $user->user_name]);
                 if (!is_null($request->input("remember_me"))) {
                     $token = Cookie::get("remember");
-                    if(is_null($token) || RememberUser::where("token",$token)->where("user_id", $user->id)->doesntExist()){
+                    if (is_null($token) || RememberUser::where("token", $token)->where("user_id", $user->id)->doesntExist()) {
                         $token = Str::random(64);
                         while (RememberUser::where("token", $token)->exists()) {
                             $token = Str::random(64);
@@ -78,19 +74,17 @@ class LoginController extends Controller
                 foreach ($user_role as $role) {//role id ごとに権限付与
                     if ($role->role_id == 1) {
                         session()->put(["Admin" => true]);
-                    }else if($role->role_id == 2){
+                    } else if ($role->role_id == 2) {
                         session()->put(["Publisher" => true]);
                     }
                 }
-                $cart_json = \Cookie::get("cart_data");
+                $cart_json = Cookie::get("cart_data");
                 setcookie("cart_data"); //cookie削除
                 $cart_data = json_decode($cart_json, true);
                 if (is_array($cart_data)) {
                     if (count($cart_data) > 0) {
                         $cart_con = new CartController();
-                        if (!$cart_con->cookie_to_db($cart_data, $user->id)) {
-                            //todo フラッシュメッセージ(CookieからDBに入れる際に在庫参照した際にカートの数量を調整した場合のメッセージ)
-                        };
+                        $cart_con->cookie_to_db($cart_data, $user->id);
                     }
                 }
                 return redirect(session()->pull("login_pre_page", "/"));
@@ -115,6 +109,7 @@ class LoginController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
+
         $email = $request->input("email");
         $user = User::where("email", $email)
             ->first();
@@ -130,7 +125,6 @@ class LoginController extends Controller
             ]);
             Mail::to($email)->send(new PasswordForget($token));
         }
-
         return redirect("login/forget_mail_send");
     }
 

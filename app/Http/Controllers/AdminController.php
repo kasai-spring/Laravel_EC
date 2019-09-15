@@ -127,6 +127,7 @@ class AdminController extends Controller
     public function show_edit_user($user_id = null)
     {
         if (is_null($user_id) || $user_id == session()->get("login_id")) {
+            //ログイン中のアカウントは編集させない
             return redirect("admin");
         }
         $user_data = User::find($user_id);
@@ -235,11 +236,11 @@ class AdminController extends Controller
             return redirect("admin");
         }
         $validator = Validator::make($request->all(), [
-            "good_name" => "required|string|between:1,16",
+            "good_name" => "required|string|between:1,32",
             "good_price" => "required|integer|between:1,10000000",
             "good_stock" => "required|integer|between:1,100000",
             "good_category" => "required|integer|exists:goods_categories,id",
-            "good_producer" => "required|string|between:1,16",
+            "good_producer" => "required|string|between:1,32",
         ]);
         if ($validator->fails()) {
             session()->put("admin_select_mode", 2);

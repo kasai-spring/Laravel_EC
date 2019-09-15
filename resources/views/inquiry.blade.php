@@ -11,7 +11,7 @@
         <h3>お問い合わせフォーム</h3>
         <form action="{{url("inquiry/confirm")}}" method="post">
             @csrf
-            @if(!Session::has("login_id"))
+            @if(!session("login_id"))
                 @if(!empty($errors->first("user_name"))) <p
                     class="form_error_message">{{$errors->first("user_name")}}</p> @endif
                 <label>

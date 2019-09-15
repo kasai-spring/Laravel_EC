@@ -8,6 +8,7 @@ use App\Models\Cart;
 
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
@@ -52,7 +53,7 @@ class CartController extends Controller
             return view("cart", compact("cart_data", "total_price"));
         }
         //ログインしてない場合
-        $cart_json = \Cookie::get("cart_data");
+        $cart_json = Cookie::get("cart_data");
         $cart_cookie = json_decode($cart_json, true);
         if (is_null($cart_cookie) || count($cart_cookie) == 0) {
             $cart_data = array();
@@ -105,18 +106,15 @@ class CartController extends Controller
         }
 
         //ログインしてない場合
-        $cart_json = \Cookie::get("cart_data");
+        $cart_json = Cookie::get("cart_data");
         $cart_data = json_decode($cart_json, true);
         if (is_null($cart_data)) {
             $cart_data = array();
         }
-        if (count($cart_data) >= 30) {
-            return redirect()
-                ->back();
-        }
         if (array_key_exists($good_id, $cart_data)) {
             if ($cart_data[$good_id] + $quantity > 30) {
                 $cart_data[$good_id] = 30;
+                session()->flash("flash_message", "同じ商品を30個以上購入することはできません");
             } else {
                 $cart_data[$good_id] += $quantity;
             }
@@ -124,7 +122,7 @@ class CartController extends Controller
             $cart_data[$good_id] = $quantity;
         }
         $cart_json = json_encode($cart_data);
-        \Cookie::queue("cart_data", $cart_json, 10080);
+        Cookie::queue("cart_data", $cart_json, 10080);
         return redirect()
             ->route("cart");
 
@@ -133,9 +131,6 @@ class CartController extends Controller
     public function cookie_to_db(array $cart_data, int $login_id): bool
     {
         $cart_count = Cart::where("user_id", $login_id)->count();
-        if ($cart_count > 30) {
-            return false;
-        }
         foreach ($cart_data as $good_id => $quantity) {
             $cart = Cart::firstOrNew(["user_id" => $login_id, "good_id" => $good_id]);
             if ($cart->quantity + $quantity > 30) {

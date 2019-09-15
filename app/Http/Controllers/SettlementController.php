@@ -20,7 +20,6 @@ class SettlementController extends Controller
             return redirect(url("cart"));
         }
         $login_id = session()->get("login_id");
-
         if (Cart::where("user_id", $login_id)->doesntExist()) {
             return redirect()->back();
         }
@@ -71,7 +70,7 @@ class SettlementController extends Controller
         $login_id = session()->get("login_id");
 
         if (Cart::where("user_id", $login_id)->doesntExist()) {
-            return redirect()->back();
+            return redirect()->route("cart");
         }
         $address_data = Address::where("user_id", $login_id)
             ->latest("updated_at")
@@ -101,7 +100,7 @@ class SettlementController extends Controller
         }
         $cart_token = Str::random(32);
         if ($check_data[1]) {
-            //todo フラッシュメッセージ(カートの商品を減らした)
+            session()->flash("flash_message", "在庫切れのため商品数を変更しました");
         }
         session()->put(["cart_data" => $cart_data, "cart_token" => $cart_token, "total_price" => $total_price]);
         return view("settlement_confirm");

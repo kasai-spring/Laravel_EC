@@ -15,39 +15,40 @@ class HomeController extends Controller
     {
         try {
             $data = Good::inRandomOrder()
-                ->whereNull("deleted_at")
+                ->where("good_stock", "!=", 0)
                 ->limit(24)
                 ->get();
         } catch (QueryException $e) {
-            return view("error");
+            return redirect()->route("error");
         };
         return view("home", compact("data"));
     }
 
-    public function inquiry(Request $request){
+    public function inquiry(Request $request)
+    {
         $rule = ["option" => "required|integer|between:0,3",
-                 "subject" => "required|string|between:1,15",
-                 "content" => "required|string|between:15,1000"];
-        if(!session()->has("login_id")){
-            $rule =  $rule + ["email" => "required|string|email:rfc", "user_name" => "required|string|between:1,8"];
+            "subject" => "required|string|between:1,15",
+            "content" => "required|string|between:15,1000"];
+        if (!session()->has("login_id")) {
+            $rule = $rule + ["email" => "required|string|email:rfc|between:5,255", "user_name" => "required|string|between:1,8"];
         }
-        $validator = Validator::make($request->all(),$rule);
-        if($validator->fails()){
+        $validator = Validator::make($request->all(), $rule);
+        if ($validator->fails()) {
             return redirect()
                 ->back()
                 ->withInput()
                 ->withErrors($validator);
         }
-        if(session()->has("login_id")){
+        if (session()->has("login_id")) {
             $login_id = session()->get("login_id");
             $email = null;
             $user_name = null;
-        }else{
+        } else {
             $login_id = null;
             $email = $request->input("email");
             $user_name = $request->input("user_name");
         }
-        switch ($request->input("option")){
+        switch ($request->input("option")) {
             case 0:
                 $option = "ご意見・ご要望";
                 break;
@@ -73,14 +74,14 @@ class HomeController extends Controller
             "inquiry_subject" => $subject,
             "inquiry_content" => $content,
         ]);
-
         return view("inquiry_confirm");
     }
 
-    public function confirm_back(){
+    public function confirm_back()
+    {
         $user_name = session()->pull("inquiry_user_name");
         $email = session()->pull("inquiry_email");
-        switch (session()->pull("inquiry_option")){
+        switch (session()->pull("inquiry_option")) {
             case "ご意見・ご要望":
                 $option = 0;
                 break;
@@ -99,10 +100,13 @@ class HomeController extends Controller
         $subject = session()->pull("inquiry_subject");
         $content = session()->pull("inquiry_content");
         session()->forget("inquiry_user_id");
-        return view("inquiry", compact("user_name", "email", "option", "subject", "content"));
+        session()->flashInput(["user_name" => $user_name, "email" => $email, "option" => $option, "subject" => $subject,
+            "content" => $content]);
+        return redirect("inquiry");
     }
 
-    public function inquiry_complete(){
+    public function inquiry_complete()
+    {
         if (!preg_match("/.*confirm\z/", url()->previous())) {
             return redirect()->route("home");
         }
@@ -121,15 +125,14 @@ class HomeController extends Controller
             "subject" => $subject,
             "content" => $content,
         ]);
-
         return redirect("inquiry/complete");
     }
 
-    public function show_inquiry_complete(){
+    public function show_inquiry_complete()
+    {
         if (!preg_match("/.*confirm\z/", url()->previous())) {
             return redirect()->route("home");
         }
-
         return view("inquiry_complete");
     }
 }

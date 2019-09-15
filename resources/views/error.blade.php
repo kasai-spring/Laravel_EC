@@ -2,12 +2,13 @@
 
 @section("title", "エラー")
 
+@section("head")
+    <link rel="stylesheet" href="{{asset("css/error.css")}}">
+@endsection
+
 @section("main")
-    <h2>エラーが発生しました</h2>
-    <h4><a href="{{url('/')}}">ホーム画面に戻る</a></h4>
-    @if(session("login_id"))
-        <h3>{{session("login_id")}}</h3>
-        @else
-        <h3>ゲストだよ</h3>
-    @endif
+    <div id="error_page">
+        <h1>エラーが発生しました</h1>
+        <h3>時間をおいてもう一度試してください</h3>
+    </div>
 @endsection

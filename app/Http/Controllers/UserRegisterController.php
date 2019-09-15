@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,11 +23,9 @@ class UserRegisterController extends Controller
             "email.unique" => "この:attributeは既に登録されています。",
         ]);
 
-
         $user_name = $request->input("user_name");
         $email = $request->input("email");
         $password = $request->input("password");
-        // validatorはfails()が実行されたときにバリデーションする
         try {
             if ($validator->fails()) {
                 return redirect()
@@ -49,34 +48,30 @@ class UserRegisterController extends Controller
         $user_name = session()->pull("register_user_name", "");
         $email = session()->pull("register_email", "");
         session()->forget("register_password");
-        return view("register", compact("user_name", "email"));
+        session()->flashInput(["user_name" => $user_name, "email" => $email]);
+        return redirect("register");
     }
 
     public function user_register(Request $request)
     {
         $user_name = session()->pull("register_user_name");
         $email = session()->pull("register_email");
-        $raw_password = session()->pull("register_password");
-        $password = Hash::make($raw_password);
+        $password = Hash::make(session()->pull("register_password"));
         try {
             $user_create = User::create([
                 "user_name" => $user_name,
                 "email" => $email,
                 "password" => $password,
-                "created_at" => now(),
-                "updated_at" => now(),
                 "last_logined_at" => now(),
             ]);
             session()->put(["login_id" => $user_create->id, "login_name" => $user_create -> user_name]);
-            $cart_json = \Cookie::get("cart_data");
+            $cart_json = Cookie::get("cart_data");
             setcookie("cart_data"); //cookie削除
             $cart_data = json_decode($cart_json, true);
             if (is_array($cart_data)) {
                 if (count($cart_data) > 0) {
                     $cart_con = new CartController();
-                    if (!$cart_con->cookie_to_db($cart_data, $user_create->id)) {
-                        //todo フラッシュメッセージ
-                    };
+                    $cart_con->cookie_to_db($cart_data, $user_create->id);
                 }
             }
         } catch (QueryException $e) {

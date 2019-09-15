@@ -1,0 +1,10 @@
+#error_page{
+    width:70%;
+    margin: 0 auto;
+}
+#error_page h1{
+    text-align: center;
+}
+#error_page h3{
+    text-align: center;
+}
