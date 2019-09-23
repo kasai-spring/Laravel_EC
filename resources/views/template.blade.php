@@ -15,8 +15,8 @@
     <a id="site_logo" href="{{url("/")}}"><h1><?php echo config("app.name")?></h1></a>
     <div id="header_search">
         <form action="{{url("goods/search")}}">
-            <input id="form" type="text" name="q" placeholder="検索ワード">
-            <input id="button" type="submit" value="&#xf002;" class="fas">
+            <input type="text" name="q" placeholder="検索ワード">
+            <input type="submit" value="&#xf002;" class="fas">
         </form>
     </div>
     <ul id="header_bar">

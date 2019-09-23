@@ -16,7 +16,7 @@
             <input type="button" class="fas move_button" id="l_r_button" value="決済する"
                    onclick="onClickConfirmFormButton('{{url("settlement/process")}}')">
         </form>
-        <div id="shipping_address">
+        <div id="shipping_data">
             <table>
                 <tr>
                     <th colspan="2">決済方法と配送先住所</th>
@@ -47,7 +47,7 @@
                 </tr>
             </table>
         </div>
-        <div id="shipping_address">
+        <div id="shipping_data">
             <table>
                 <tr>
                     <th>購入商品</th>

@@ -3,12 +3,11 @@
 @section("title", "管理者画面")
 
 @section("head")
-    <link rel="stylesheet" href="{{asset("css/management.css")}}">
-    <link rel="stylesheet" href="{{asset("css/admin.css")}}">
+    <link rel="stylesheet" href="{{asset("css/dashboard.css")}}">
 @endsection
 
 @section("main")
-    <form action="{{url("admin")}}" id="publisher_form" method="post">
+    <form action="{{url("admin")}}" class="dashboard_form" method="post">
         @csrf
         <div id="side_bar">
             <div>
@@ -33,7 +32,7 @@
             </div>
         </div>
         <div id="main_content">
-            <div id="user_edit_form">
+            <div id="user_edit_form" class="view_content">
                 <table>
                     <tr>
                         <th>ユーザーID</th>
@@ -64,36 +63,44 @@
                     {{$user_data->appends(["mode" => 0])->links()}}
                 </div>
             </div>
-            <div id="user_register_form">
+            <div id="user_register_form" class="view_content">
                 <table>
                     <tr>
                         <th>メールアドレス</th>
                         <td>
-                            @if(!empty($errors->first("email"))) <p
-                                class="form_error_message">{{$errors->first("email")}}</p> @endif
-                            <input type="text" name="email" class="text_input_form @if(!empty($errors->first("email"))) has-error @endif" value="{{old("email")}}" placeholder="メールアドレス" required>
+                            <div class="table_input">
+                                @if(!empty($errors->first("email"))) <p
+                                    class="form_error_message">{{$errors->first("email")}}</p> @endif
+                                <input type="text" name="email" class="text_input_form @if(!empty($errors->first("email"))) has-error @endif" value="{{old("email")}}" placeholder="メールアドレス" required>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <th>パスワード</th>
                         <td>
-                            @if(!empty($errors->first("password"))) <p
-                                class="form_error_message">{{$errors->first("password")}}</p> @endif
-                            <input type="password" name="password" class="text_input_form @if(!empty($errors->first("password"))) has-error @endif" placeholder="パスワード" required>
+                            <div class="table_input">
+                                @if(!empty($errors->first("password"))) <p
+                                    class="form_error_message">{{$errors->first("password")}}</p> @endif
+                                <input type="password" name="password" class="text_input_form @if(!empty($errors->first("password"))) has-error @endif" placeholder="パスワード" required>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <th>再入力用パスワード</th>
                         <td>
-                            <input type="password" name="password_confirmation" class="text_input_form @if(!empty($errors->first("password"))) has-error @endif" placeholder="パスワード" required>
+                            <div class="table_input">
+                                <input type="password" name="password_confirmation" class="text_input_form @if(!empty($errors->first("password"))) has-error @endif" placeholder="パスワード" required>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <th>ユーザー名</th>
                         <td>
-                            @if(!empty($errors->first("user_name"))) <p
-                                class="form_error_message">{{$errors->first("user_name")}}</p> @endif
-                            <input type="text" name="user_name" class="text_input_form @if(!empty($errors->first("user_name"))) has-error @endif" placeholder="ユーザー名" value="{{old("user_name")}}" required>
+                            <div class="table_input">
+                                @if(!empty($errors->first("user_name"))) <p
+                                    class="form_error_message">{{$errors->first("user_name")}}</p> @endif
+                                <input type="text" name="user_name" class="text_input_form @if(!empty($errors->first("user_name"))) has-error @endif" placeholder="ユーザー名" value="{{old("user_name")}}" required>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -110,15 +117,17 @@
                     <tr>
                         <th>会社名</th>
                         <td>
-                            @if(!empty($errors->first("company_name"))) <p
-                                class="form_error_message">{{$errors->first("company_name")}}</p> @endif
-                            <input type="text" id="company_name" name="company_name" required disabled class="text_input_form @if(!empty($errors->first("company_name"))) has-error @endif" value="{{old("company_name")}}" placeholder="会社名">
+                            <div class="table_input">
+                                @if(!empty($errors->first("company_name"))) <p
+                                    class="form_error_message">{{$errors->first("company_name")}}</p> @endif
+                                <input type="text" id="company_name" name="company_name" required disabled class="text_input_form @if(!empty($errors->first("company_name"))) has-error @endif" value="{{old("company_name")}}" placeholder="会社名">
+                            </div>
                         </td>
                     </tr>
                 </table>
                 <input type="submit" class="form_button submit_button" value="送信">
             </div>
-            <div id="edit_good_form">
+            <div id="edit_good_form" class="view_content">
                 <table>
                     <tr>
                         <th>商品ID</th>
@@ -151,7 +160,7 @@
                     {{$goods_data->appends(["mode" => 2])->links()}}
                 </div>
             </div>
-            <div id="inquiry_check_form">
+            <div id="inquiry_check_form" class="view_content">
                 <table>
                     <tr>
                         <th>ユーザー名</th>

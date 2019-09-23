@@ -25,7 +25,7 @@
                 </div>
                 <div id="table_top_obj">
                     <h2>カート</h2>
-                    <a href="{{url("settlement/address")}}" id="settlement">レジに進む</a>
+                    <a href="{{url("settlement/address")}}" id="settlement"><input type="button" value="レジに進む"></a>
                 </div>
             @endif
             <table class="good_table">

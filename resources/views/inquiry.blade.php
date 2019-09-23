@@ -54,7 +54,7 @@
             <label>
                 <textarea name="content" class="@if(!empty($errors->first("subject"))) has-error @endif" cols="30" rows="35" required>{{old("content",@$content ?: "")}}</textarea>
             </label>
-            <input type="submit" id="l_r_button" class="fas" value="&#xf101;">
+            <input type="submit" class="fas" value="&#xf101;">
         </form>
     </div>
 @endsection

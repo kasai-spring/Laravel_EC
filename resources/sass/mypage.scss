@@ -1,0 +1,79 @@
+@import "variables";
+#setting_menu{
+    width:60%;
+    margin: 0 auto;
+    h2{
+        font-weight: normal;
+    }
+    ul{
+        list-style: none;
+        border-radius: 5px;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        li{
+            background-color: #BDC2BF;
+            font-size: 4vmin;
+            a{
+                text-decoration: none;
+                color: black;
+            }
+            &:first-child{
+                border-radius: 5px 5px 0 0;
+            }
+            &:last-child{
+                border-radius: 0 0 5px 5px;
+            }
+            &:nth-child(even){
+                background-color:#DBDDDC;
+            }
+        }
+    }
+}
+#setting_form {
+    width: 60%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    h2 {
+        font-weight: normal;
+    }
+    .flash_message{
+        h2 {
+            text-align: center;
+            font-weight: normal;
+            color: green;
+            background-color: #8BC58B;
+            border-radius: 5px;
+            padding: 1vh 0;
+        }
+    }
+    table {
+        border: 1px solid black;
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 3vmin;
+        table-layout:fixed;
+        th {
+            width:30%;
+            background: #D9D9D9;
+            border-bottom: black 1px dotted;
+            font-weight: normal;
+            text-align: center;
+        }
+        td {
+            width:70%;
+            background-color: #EEEEEE;
+            border-bottom: black 1px dotted;
+            text-align: left;
+            padding: 10px;
+            word-wrap:break-word;
+        }
+    }
+    .input_form {
+        @include input_text()
+    }
+    input[type="submit"]{
+        @include submit_button
+    }
+}

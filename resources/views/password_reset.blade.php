@@ -24,7 +24,7 @@
                 <input class="l_r_form @if(!empty($errors->first("password"))) has-error @endif" type="password" name="password_confirmation" placeholder="もう一度パスワードを入力してください" required>
                 <i class="fa fa-key fa-lg fa-fw" aria-hidden="true"></i>
             </label>
-            <input type="submit" id="l_r_button" class="fas" value="&#xf101;">
+            <input type="submit" class="fas" value="&#xf101;">
         </form>
     </div>
 

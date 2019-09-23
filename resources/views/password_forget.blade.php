@@ -16,7 +16,7 @@
                 <input class="l_r_form @if(!empty($errors->first("email"))) has-error @endif" type="text" name="email" placeholder="メールアドレス" value="{{old("email")}}" required>
                 <i class="fa fa-envelope fa-lg fa-fw" aria-hidden="true"></i>
             </label>
-            <input type="submit" id="l_r_button" class="fas" value="&#xf101;">
+            <input type="submit" class="fas" value="&#xf101;">
         </form>
     </div>
 @endsection

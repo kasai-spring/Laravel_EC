@@ -1,0 +1,139 @@
+@import "variables";
+
+.settlement_form{
+    width: 60%;
+    margin: 0 auto;
+    display: flex;
+    form{
+        width: 100%;
+    }
+    h3{
+        font-size: 3vmin;
+        font-weight: normal;
+    }
+    .payment_radio{
+        border-style: dotted;
+        border-width: 0 0 1px;
+        border-color: black;
+        label{
+            height:10vh;
+        }
+    }
+
+    .select_radio{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-bottom: 3vh;
+        margin-top: 2vh;
+        label{
+            width: 30%;
+        }
+        input[type="radio"]{
+            display: none;
+            &:checked ~ .radio_option{
+                background-color: #FF8B8B;
+            }
+        }
+        .radio_option{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            padding: 1vh 0;
+            border: gray 1px solid;
+            border-radius: 5px;
+            i{
+                text-align: center;
+                font-size: 5vmin;
+            }
+            span{
+                text-align: center;
+            }
+        }
+        .payment_radio{
+            border-style: dotted;
+            border-width: 0 0 1px;
+            border-color: black;
+            label{
+                height:10vh;
+            }
+        }
+        .address_select{
+            display: flex;
+            flex-wrap: wrap;
+        }
+    }
+    .address_input_form{
+        display: flex;
+        flex-direction: column;
+        label{
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            margin: 1vh 0;
+        }
+        .address_form{
+            @include input_text(2.5vmin);
+            width: 100%;
+
+        }
+    }
+    .move_button{
+        @include submit_button();
+    }
+}
+
+
+
+.settlement_confirm_form{
+    width: 70%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    form{
+        display: flex;
+        justify-content: space-between;
+        .move_button{
+            @include submit_button();
+            margin: 2vh 0;
+        }
+    }
+
+}
+
+#shipping_data{
+    margin-top: 5vh;
+    width: 100%;
+    table{
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        background-color: #E0E0E0;
+        margin-bottom: 1vh;
+        th{
+            padding: 10px 0;
+            text-align: center;
+        }
+        td{
+            padding: 10px 0;
+            &:not(.good){
+                text-align: center;
+            }
+        }
+        tr:nth-child(odd){
+            background-color: #CACACA;
+        }
+        .good{
+            display: flex;
+            text-align: right;
+            width: 80%;
+            justify-content: space-between;
+            height: 15vh;
+            margin: 0 auto;
+            img{
+                height: 100%;
+            }
+        }
+    }
+}

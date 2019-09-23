@@ -35,8 +35,8 @@
         </table>
         <form id="confirm_form" method="post">
             @csrf
-            <input type="button" class="fas" id="l_r_button" value="&#xf100;" onclick="onClickConfirmFormButton('{{url("inquiry")}}')">
-            <input type="button" class="fas" id="l_r_button" value="&#xf101;" onclick="onClickConfirmFormButton('{{url("inquiry/complete")}}')">
+            <input type="button" class="fas" value="&#xf100;" onclick="onClickConfirmFormButton('{{url("inquiry")}}')">
+            <input type="button" class="fas" value="&#xf101;" onclick="onClickConfirmFormButton('{{url("inquiry/complete")}}')">
         </form>
 
     </div>

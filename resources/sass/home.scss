@@ -1,0 +1,21 @@
+#goods_box{
+    display: flex;
+    flex-wrap: wrap;
+    width: 92%;
+    justify-content: space-around;
+    margin: 0 auto;
+
+}
+#good{
+    width:23%;
+    margin-bottom: 4vh;
+    a{
+        text-decoration: none;
+        color: black;
+        font-family: sans-serif;
+    }
+    img{
+        width:100%;
+        margin-bottom: 1vh;
+    }
+}

@@ -8,7 +8,7 @@
 
 @section("main")
     <div id="search_result_form">
-        <form id="detail_searcher" action="{{url("goods/search")}}">
+        <form action="{{url("goods/search")}}">
             <select name="category">
                 <option value="0">全てのカテゴリー</option>
                 @foreach($category_data as $category)
@@ -29,7 +29,9 @@
 
         <div id="search_result_goods">
             @if(count($goods_data) == 0)
-                検索結果がありませんでした
+                <span id="search_result_message">
+                    <h2>検索結果がありませんでした</h2>
+                </span>
             @else
                 @if(!is_null($q))
                     <span id="search_result_message">

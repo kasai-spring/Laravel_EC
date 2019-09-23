@@ -30,7 +30,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>パスワードを再入力してください</th>
+                    <th>再入力してください</th>
                     <td>
                         <label>
                             <input type="password"

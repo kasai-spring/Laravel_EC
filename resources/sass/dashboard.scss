@@ -1,0 +1,136 @@
+@import "variables";
+
+.dashboard_form {
+    display: flex;
+}
+
+#side_bar {
+    min-height: 73vh;
+    width: 15%;
+    background-color: #C0C0C0;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+
+    label {
+        display: flex;
+        justify-content: space-between;
+        height: 6vh;
+        border-bottom: black 1px dotted;
+        font-size: 1.5vmin;
+        padding: 1vh 1vw;
+    }
+
+    h2 {
+        margin: 0;
+        line-height: 4vh;
+        font-weight: normal;
+    }
+
+    i {
+        font-size: 3vmin;
+        line-height: 4vh;
+    }
+
+    input[type="radio"] {
+        display: none;
+
+        &:checked + label {
+            background-color: #90C0C0;
+        }
+    }
+}
+
+#main_content {
+    &:not(.edit_form){
+        width: 85%;
+    }
+
+    .edit_form{
+        width: 100%;
+    }
+
+    h2{
+        margin:0;
+    }
+
+    table {
+        width: 100%;
+        margin: 0 auto;
+        border-collapse: collapse;
+        border-spacing: 0;
+        border: #25714E solid 1px;
+
+        tr{
+            text-align: center;
+            height: 6vh;
+            &:nth-child(odd){
+                background-color: #74C8A1;
+            }
+            &:nth-child(even){
+                background-color: #9CD7BC;
+            }
+            th {
+                background-color: #34A06E;
+                border-top: solid 1px #25714E;
+                border-bottom: solid 1px #25714E;
+                height: 2.5vh;
+                font-size: 2vmin;
+                font-weight: normal;
+            }
+            td{
+                .table_input{
+                    width: 90%;
+                    margin: 0 auto;
+                    text-align: left;
+                }
+            }
+
+            .edit_button{
+                @include table_button()
+            }
+        }
+    }
+    .view_content{
+        width: 100%;
+        display: none;
+        padding: 1vh 1vw;
+    }
+
+    #good_display{
+        tr{
+            height: 7vh;
+        }
+    }
+
+    #good_edit{
+        a{
+            text-decoration: none;
+        }
+    }
+    .edit_form{
+        width: 60%;
+        margin: 0 auto;
+        form{
+            display: flex;
+            flex-direction: column;
+        }
+        tr{
+            height: 9vh;
+        }
+    }
+    .text_input_form{
+        @include input_text();
+        width: 100%;
+    }
+
+    .select_form{
+        @include select_form()
+    }
+
+    .submit_button{
+        @include submit_button()
+    }
+}
+
+

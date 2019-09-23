@@ -8,7 +8,7 @@
 
 @section("main")
     <div class="settlement_form">
-        <div id="shipping_address">
+        <div id="shipping_data">
             <h2>購入が完了しました</h2>
             <table>
                 <tr>

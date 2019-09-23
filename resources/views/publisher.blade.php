@@ -3,11 +3,11 @@
 @section("title","商品管理ページ")
 
 @section("head")
-    <link rel="stylesheet" href="{{asset("css/management.css")}}">
+    <link rel="stylesheet" href="{{asset("css/dashboard.css")}}">
 @endsection
 
 @section("main")
-    <form action="{{url("publisher")}}" id="publisher_form" method="post" enctype="multipart/form-data">
+    <form action="{{url("publisher")}}" class="dashboard_form" method="post" enctype="multipart/form-data">
         @csrf
         <div id="side_bar">
             <div>
@@ -27,7 +27,7 @@
             </div>
         </div>
         <div id="main_content">
-            <div id="sales_history">
+            <div id="sales_history" class="view_content">
                 <h2>販売履歴</h2>
                 @if(count($sales_history) == 0)
                     <h2>まだ購入されてません</h2>
@@ -59,7 +59,7 @@
                     </div>
                 @endif
             </div>
-            <div id="good_edit">
+            <div id="good_edit" class="view_content">
                 <h2>出品商品編集</h2>
                 @if(count($goods_data) == 0)
                     <h2>まだ出品されてません</h2>
@@ -93,41 +93,49 @@
                     </div>
                 @endif
             </div>
-            <div id="good_display" class="good_edit">
+            <div id="good_display" class="good_edit view_content">
                 <h2>新規出品</h2>
                 <table>
                     <tr>
                         <th>商品名</th>
                         <td>
-                            @if(!empty($errors->first("good_name"))) <p
-                                class="form_error_message">{{$errors->first("good_name")}}</p> @endif
-                            <input type="text" name="good_name" class="text_input_form @if(!empty($errors->first("good_name"))) has-error @endif" value="{{old("good_name")}}" placeholder="商品名" required>
+                            <div class="table_input">
+                                @if(!empty($errors->first("good_name"))) <p
+                                    class="form_error_message">{{$errors->first("good_name")}}</p> @endif
+                                <input type="text" name="good_name" class="text_input_form @if(!empty($errors->first("good_name"))) has-error @endif" value="{{old("good_name")}}" placeholder="商品名" required>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <th>製造会社</th>
                         <td>
-                            @if(!empty($errors->first("good_producer"))) <p
-                                class="form_error_message">{{$errors->first("good_producer")}}</p> @endif
-                            <input type="text" name="good_producer" class="text_input_form @if(!empty($errors->first("good_producer"))) has-error @endif" value="{{old("good_producer")}}" placeholder="製造会社"
-                                   required>
+                            <div class="table_input">
+                                @if(!empty($errors->first("good_producer"))) <p
+                                    class="form_error_message">{{$errors->first("good_producer")}}</p> @endif
+                                <input type="text" name="good_producer" class="text_input_form @if(!empty($errors->first("good_producer"))) has-error @endif" value="{{old("good_producer")}}" placeholder="製造会社"
+                                       required>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <th>価格</th>
                         <td>
-                            @if(!empty($errors->first("good_price"))) <p
-                                class="form_error_message">{{$errors->first("good_price")}}</p> @endif
-                            <input type="tel" name="good_price" class="text_input_form @if(!empty($errors->first("good_price"))) has-error @endif" value="{{old("good_price")}}" placeholder="価格" required>
+                            <div class="table_input">
+                                @if(!empty($errors->first("good_price"))) <p
+                                    class="form_error_message">{{$errors->first("good_price")}}</p> @endif
+                                <input type="tel" name="good_price" class="text_input_form @if(!empty($errors->first("good_price"))) has-error @endif" value="{{old("good_price")}}" placeholder="価格" required>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <th>在庫数</th>
                         <td>
-                            @if(!empty($errors->first("good_stock"))) <p
-                                class="form_error_message">{{$errors->first("good_stock")}}</p> @endif
-                            <input type="tel" name="good_stock" class="text_input_form @if(!empty($errors->first("good_stock"))) has-error @endif" value="{{old("good_stock")}}" placeholder="在庫数"
-                                   required>
+                            <div class="table_input">
+                                @if(!empty($errors->first("good_stock"))) <p
+                                    class="form_error_message">{{$errors->first("good_stock")}}</p> @endif
+                                <input type="tel" name="good_stock" class="text_input_form @if(!empty($errors->first("good_stock"))) has-error @endif" value="{{old("good_stock")}}" placeholder="在庫数"
+                                       required>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -152,7 +160,7 @@
                         </td>
                     </tr>
                 </table>
-                <input type="submit" class="form_button submit_button">
+                <input type="submit" class="form_button submit_button" value="登録">
             </div>
         </div>
 
