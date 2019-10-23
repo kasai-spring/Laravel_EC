@@ -38,7 +38,7 @@ class CartController extends Controller
                 return response()->json(["result" => "error"], 400);
             }
 
-            if (session()->has("login_id")) {
+            if (session()->has("login_id")) {//ログインしてる場合
                 $login_id = session()->get("login_id");
                 $cart = Cart::where("user_id", $login_id)
                     ->where("good_id", $good_id)
@@ -57,7 +57,7 @@ class CartController extends Controller
                     $cart->fill(["quantity" => $quantity])->save();
                     return response()->json(["result" => "success","quantity"=>$quantity, "stock"=>min(30,$good->good_stock)]);
                 }
-            }else{
+            }else{//ログインしてない場合
                 $cart_json = Cookie::get("cart_data");
                 $cart_data = json_decode($cart_json, true);
                 if(!array_key_exists($good_id, $cart_data)){

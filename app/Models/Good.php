@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -61,5 +63,56 @@ class Good extends Model
         return $this->belongsTo("App\Models\Publisher", "good_publisher");
     }
 
+    /**
+     * [Model]
+     *
+     * @return Collection
+     *
+     * @throws QueryException
+     */
+    public function getHomeGoods() : Collection
+    {
+        return static::inRandomOrder()
+            ->where("good_stock", "!=", 0)
+            ->limit(24)
+            ->get();
+    }
 
+    public function getGoodsDataPage(?int $pageNumber){
+        return static::latest("created_at")->paginate(24, ["*"], "good_page", $pageNumber);
+    }
+
+    public function deleteGoodsData(string $good_id){
+        static::where("good_id", $good_id)->delete();
+    }
+
+    public function getGoodData(string $good_id){
+        return static::where("good_id", $good_id)->first();
+    }
+
+    public function goodStockChanger(int $id, int $good_stock){
+        static::first($id)->fill(["good_stock" => $good_stock])->save();
+    }
+
+    public function updateGoodData(int $id, string $good_name, int $good_price, int $good_stock, string $good_producer,
+                                   int $good_category){
+        $old_good = static::first($id);
+        static::insert([
+            "good_id" => $old_good->good_id,
+            "good_name" => $good_name,
+            "good_producer" => $good_producer,
+            "good_publisher" => $old_good->good_publisher,
+            "good_price" => $good_price,
+            "good_stock" => $good_stock,
+            "good_category" => $good_category,
+            "picture_path" => $old_good->picture_path,
+            "created_at" => $old_good->created_at,
+            "updated_at" => now(),
+        ]);
+        try {
+            $old_good->delete();
+        } catch (\Exception $e) {
+            throw new $e;
+        }
+    }
 }

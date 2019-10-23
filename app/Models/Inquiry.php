@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\QueryException;
 
 /**
  * App\Models\Inquiry
@@ -35,7 +36,39 @@ class Inquiry extends Model
 {
     protected $guarded = [];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo("App\Models\User");
+    }
+
+    /**
+     * [Model]問い合わせ内容登録
+     *
+     * 問い合わせ内容をInquiryテーブルに追加する
+     *
+     * @param int|null $login_id
+     * @param string|null $user_name
+     * @param string|null $email
+     * @param string $option
+     * @param string $subject
+     * @param string $content
+     *
+     * @throws QueryException
+     */
+    public function createInquiry(?int $login_id, ?string $user_name, ?string $email, string $option, string $subject, string $content)
+    {
+        static::create([
+            "user_id" => "string",
+            "user_name" => $user_name,
+            "email" => $email,
+            "option" => $option,
+            "subject" => $subject,
+            "content" => $content,
+        ]);
+    }
+
+    public function getInquiryData(?int $pageNumber)
+    {
+       return static::latest("created_at")->paginate(12, ["*"], "inquiry_page", $pageNumber);
     }
 }

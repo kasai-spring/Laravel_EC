@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 /**
  * App\Models\Publisher
@@ -44,5 +45,28 @@ class Publisher extends Model
 
     public function goods(){
         $this->hasMany("App\Models\Good");
+    }
+
+    public function createPublisherData(int $user_id, string $publisher_name)
+    {
+        $publisher_id = strtoupper(Str::random(16));
+        while (static::where("publisher_id", $publisher_id)->exists()) {
+            $publisher_id = strtoupper(Str::random(16));
+        }
+        static::create([
+            "publisher_id" => $publisher_id,
+            "user_id" => $user_id,
+            "publisher_name" => $publisher_name
+        ]);
+    }
+
+    public function getPublisherData(int $user_id)
+    {
+        return static::where("user_id", $user_id)->first();
+    }
+
+    public function updatePublisherData(int $user_id, string $publisher_name){
+        $publisher_data = static::getPublisherData($user_id);
+        $publisher_data->fill(["publisher_name" => $publisher_name])->save();
     }
 }

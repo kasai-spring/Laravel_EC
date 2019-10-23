@@ -113,6 +113,7 @@ Route::group(["prefix" => "developer", "middleware" => "admin"], function (){
        return view("developer");
     });
     Route::post("add_random_goods", "DeveloperController@add_random_goods");
+    Route::get("test_module", "DeveloperController@test_module");
 });
 
 Route::group(["prefix" => "inquiry"], function(){

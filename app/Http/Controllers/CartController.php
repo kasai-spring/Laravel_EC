@@ -15,42 +15,21 @@ class CartController extends Controller
 {
     public function show_cart()
     {
+        $cart = new Cart();
         //ログインしてる場合
         if (session()->has("login_id")) {
             $login_id = session()->get("login_id");
-            $cart_data = Cart::where("user_id", $login_id)
-                ->join("goods", "goods.good_id", "=", "carts.good_id")
-                ->whereNull("goods.deleted_at")
-                ->whereColumn("goods.good_stock", "<", "carts.quantity")
-                ->get();
-
-            if (count($cart_data) > 0) {
-                session()->flash("flash_message", "在庫切れのためカート内の一部の商品の数量を変更、もしくは削除しました");
-            }
-            foreach ($cart_data as $data) {
-                if ($data->good_stock == 0) {
-                    Cart::where("user_id", $login_id)
-                        ->where("good_id", $data->good_id)
-                        ->delete();
-                } else {
-                    $cart = Cart::where("user_id", $login_id)
-                        ->where("good_id", $data->good_id)
-                        ->first();
-                    $cart->fill(["quantity" => $data->good_stock])
-                        ->save();
+            try{
+                $cart->checkCartData($login_id);
+                $cart_check = $cart->checkCartData($login_id);
+                if (!$cart_check) {
+                    session()->flash("flash_message", "在庫切れのためカート内の一部の商品の数量を変更、もしくは削除しました");
                 }
+                $cart_data = $cart->getCartData($login_id);
+            }catch (\Exception $e){
+                return redirect()->route("error");
             }
-
-            $cart_data = Cart::where("user_id", $login_id)
-                ->join("goods", "goods.good_id", "=", "carts.good_id")
-                ->whereNull("goods.deleted_at")
-                ->get();
-            $total_price = 0;
-            foreach ($cart_data as $cart) {
-                $total_price += $cart->quantity * $cart->good_price;
-            }
-
-            return view("cart", compact("cart_data", "total_price"));
+            return view("cart", compact("cart_data"));
         }
         //ログインしてない場合
         $cart_json = Cookie::get("cart_data");
@@ -60,19 +39,12 @@ class CartController extends Controller
             $cart_data = array();
             return view("cart", compact("cart_data","total_price"));
         }
-        $cart_data = Good::whereNull("deleted_at")//(deleted_atがNull) && (cookieに入ってる商品IDのいずれかと一致する)
-        ->where(function ($q) use ($cart_cookie) {
-            foreach ($cart_cookie as $good => $quantity) {
-                $q->orWhere("good_id", $good);
-            }
-        })
-            ->get();
-        $total_price = 0;
-        foreach ($cart_data as $good) {//データベースから取得したデータに個数付与
-            $good["quantity"] = $cart_cookie[$good->good_id];
-            $total_price += $cart_cookie[$good->good_id] * $good->good_price;
+        try{
+            $cart_data = $cart->getCartDataCookie($cart_cookie);
+        }catch (\Exception $e){
+            return redirect()->route("error");
         }
-        return view("cart", compact("cart_data", "total_price"));
+        return view("cart", compact("cart_data"));
     }
 
     public function add_cart(Request $request, $good_id)
@@ -80,8 +52,7 @@ class CartController extends Controller
         $validator = Validator::make($request->all(), [
             "quantity" => "required|numeric|between:1,30"
         ]);
-        if ($validator->fails() ||
-            Good::where("good_id", $good_id)->whereNull("deleted_at")->doesntExist()) {
+        if ($validator->fails()) {
             return redirect()
                 ->route("error");
         }
@@ -126,7 +97,6 @@ class CartController extends Controller
         Cookie::queue("cart_data", $cart_json, 10080);
         return redirect()
             ->route("cart");
-
     }
 
     public function cookie_to_db(array $cart_data, int $login_id): bool

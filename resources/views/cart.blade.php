@@ -58,7 +58,7 @@
                 @if(count($cart_data) != 0)
                     <tr>
                         <th>
-                            <h2>合計金額:<span id="total_price">{{$total_price}}</span>円</h2>
+                            <h2>合計金額:<span id="total_price"></span>円</h2>
                         </th>
                     </tr>
                 @endif

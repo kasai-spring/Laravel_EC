@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * App\Models\User
@@ -42,15 +44,62 @@ class User extends Model
 
     protected $guarded = [];
 
-    public function carts(){
+    public function carts()
+    {
         return $this->hasMany("App\Models\Cart");
     }
 
-    public function userroles(){
+    public function userroles()
+    {
         return $this->hasMany("App\Models\UserRole");
     }
 
-    public function addresses(){
+    public function addresses()
+    {
         return $this->hasMany("App\Models\Address");
+    }
+
+    public function getUsersDataPage(?int $pageNumber)
+    {
+        return static::latest("created_at")->paginate(24, ["*"], "user_page", $pageNumber);
+    }
+
+    public function getUserData(int $user_id)
+    {
+        return static::find($user_id);
+    }
+
+    public function deleteUserData(string $user_email, int $login_id): bool
+    {
+        $user = static::where("email", $user_email)->first();
+        if ($user->id != $login_id) {
+            try {
+                $user->delete();
+            } catch (\Exception $e) {
+                throw new $e;
+            }
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function createUserData(string $email, string $password, string $user_name) : int{
+        $user = static::create([
+            "email" => $email,
+            "password" => Hash::make($password),
+            "user_name" => $user_name
+        ]);
+        return $user->id;
+    }
+
+    public function updateUserData(int $user_id, string $email, string $user_name, ?string $password)
+    {
+        $user_data = static::getUserData($user_id);
+        $update_data = ["email" => $email, "user_name" => $user_name];
+        if(!is_null($password)){
+            $update_data = array_merge($update_data, ["password" => Hash::make($password)]);
+        }
+        $user_data->fill($update_data)->save();
     }
 }

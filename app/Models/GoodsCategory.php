@@ -30,4 +30,8 @@ class GoodsCategory extends Model
         $this -> hasMany("App\Models\Good");
     }
 
+    public function getGoodsCategory(){
+        return static::get();
+    }
+
 }

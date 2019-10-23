@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Good;
 use App\Models\Inquiry;
-use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -13,12 +12,10 @@ class HomeController extends Controller
 {
     public function index()
     {
+        $good = new Good();
         try {
-            $data = Good::inRandomOrder()
-                ->where("good_stock", "!=", 0)
-                ->limit(24)
-                ->get();
-        } catch (QueryException $e) {
+            $data = $good->getHomeGoods();
+        } catch (\Exception $e) {
             return redirect()->route("error");
         };
         return view("home", compact("data"));
@@ -117,14 +114,12 @@ class HomeController extends Controller
         $subject = session()->pull("inquiry_subject");
         $content = session()->pull("inquiry_content");
         session()->forget("inquiry_user_id");
-        Inquiry::create([
-            "user_id" => $login_id,
-            "user_name" => $user_name,
-            "email" => $email,
-            "option" => $option,
-            "subject" => $subject,
-            "content" => $content,
-        ]);
+        $inquiry = new Inquiry();
+        try{
+            $inquiry->createInquiry($login_id, $user_name, $email, $option, $subject, $content);
+        }catch (\Exception $e){
+            return redirect()->route("error");
+        }
         return redirect("inquiry/complete");
     }
 

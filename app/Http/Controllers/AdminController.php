@@ -8,10 +8,10 @@ use App\Models\Inquiry;
 use App\Models\Publisher;
 use App\Models\User;
 use App\Models\UserRole;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
@@ -23,27 +23,35 @@ class AdminController extends Controller
         if (!is_null($mode) && $mode >= 0 && $mode <= 3) {
             $select_mode = $mode;
         }
-        $user_data = User::latest("created_at")->paginate(24, ["*"], "user_page");
-        foreach ($user_data as $user) {
-            if (UserRole::where("user_id", $user->id)->where("role_id", 1)->exists()) {
-                $user["Admin"] = 1;
-            } else {
-                $user["Admin"] = 0;
+        $user = new User();
+        try {
+            $user_data = $user->getUsersDataPage($request->user_page);
+            $user_role = new UserRole();
+            foreach ($user_data as $user) {
+                if ($user_role->isAdmin($user->id)) {
+                    $user["Admin"] = 1;
+                } else {
+                    $user["Admin"] = 0;
+                }
+                if ($user_role->isPublisher($user->id)) {
+                    $user["Publisher"] = 1;
+                } else {
+                    $user["Publisher"] = 0;
+                }
             }
-            if (UserRole::where("user_id", $user->id)->where("role_id", 2)->exists()) {
-                $user["Publisher"] = 1;
-            } else {
-                $user["Publisher"] = 0;
-            }
+            $good = new Good();
+            $goods_data = $good->getGoodsDataPage($request->good_page);
+            $inquiry = new Inquiry();
+            $inquiry_data = $inquiry->getInquiryData($request->inquiry_page);
+        } catch (\Exception $e) {
+            return redirect()->route("error");
         }
-        $goods_data = Good::latest("created_at")->paginate(24, ["*"], "good_page");
-        $inquiry_data = Inquiry::latest("created_at")->paginate(12, ["*"], "inquiry_page");
         return view("admin", compact("select_mode", "user_data", "goods_data", "inquiry_data"));
     }
 
     public function edit_from_form(Request $request)
     {
-        $mode = $request->input("mode", 99);
+        $mode = $request->input("mode", 99); // 99はエラー時の数字
         if ($mode == 0) {
             $validator = Validator::make($request->all(), [
                 "user_email" => "required|string|email:rfc"
@@ -51,15 +59,13 @@ class AdminController extends Controller
             if ($validator->fails()) {
                 return redirect("admin");
             }
-            $user = User::where("email", $request->input("user_email"))->first();
-            if (session()->get("login_id") == $user->id) {
-                //ログイン中のアカウントは削除させない
-                return redirect("admin");
-            }
+            $user = new User();
             try {
-                $user->delete();
+                if (!$user->deleteUserData($request->input("user_email"), session()->get("login_id"))) {
+                    return redirect("admin");//ログイン中のアカウントを削除しようとしたからエラー
+                }
             } catch (\Exception $e) {
-                return redirect("admin");
+                return redirect("admin");//SQLエラー
             }
             return redirect("admin");
         } else if ($mode == 1) {
@@ -69,7 +75,7 @@ class AdminController extends Controller
                 "password" => "required|string|between:6,32|regex:/[ -~]+/|confirmed",
                 "user_type" => "required|integer|between:0,3"
             ];
-            $user_type = $request->input("user_type", 99);
+            $user_type = $request->input("user_type", 0);
             if ($user_type == 1 || $user_type == 3) {
                 $rule = array_merge($rule, ["company_name" => "required|string|between:2,16"]);
             }
@@ -81,31 +87,23 @@ class AdminController extends Controller
                     ->withErrors($validator)
                     ->withInput();
             }
-            $user = User::create([
-                "email" => $request->input("email"),
-                "password" => Hash::make($request->input("password")),
-                "user_name" => $request->input("user_name"),
-            ]);
-            if ($user_type == 1 || $user_type == 3) {
-                UserRole::create([
-                    "role_id" => 2,
-                    "user_id" => $user->id,
-                ]);
-                $publisher_id = strtoupper(Str::random(16));
-                while (Publisher::where("publisher_id", $publisher_id)->exists()) {
-                    $publisher_id = strtoupper(Str::random(16));
-                }
-                Publisher::create([
-                    "publisher_id" => $publisher_id,
-                    "user_id" => $user->id,
-                    "publisher_name" => $request->input("company_name")
-                ]);
-            }
-            if ($user_type == 2 || $user_type == 3) {
-                UserRole::create([
-                    "role_id" => 1,
-                    "user_id" => $user->id,
-                ]);
+            try {
+                DB::transaction(function () use ($request, $user_type) {
+                    $user = new User();
+                    $user_id = $user->createUserData($request->input("email"), $request->input("password"),
+                        $request->input("user_name"));
+                    $user_role = new UserRole();
+                    if ($user_type == 1 || $user_type == 3) {
+                        $user_role->userRoleCreate($user_id, 2);
+                        $publisher = new Publisher();
+                        $publisher->createPublisherData($user_id, $request->input("company_name"));
+                    }
+                    if ($user_type == 2 || $user_type == 3) {
+                        $user_role->userRoleCreate($user_id, 1);
+                    }
+                });
+            } catch (\Throwable $e) {
+                return redirect()->route("error");
             }
             return redirect("admin");
 
@@ -116,35 +114,42 @@ class AdminController extends Controller
             if ($validator->fails()) {
                 return redirect("admin");
             }
-            Good::where("good_id", $request->input("good_id"))->delete();
+            $good = new Good();
+            try {
+                $good->deleteGoodsData($request->input("good_id"));
+            } catch (\Exception $e) {
+                return redirect()->route("error");
+            }
             session()->put(["admin_select_mode" => 2]);
             return redirect("admin");
         } else {
-            return redirect("admin");
+            return redirect()->route("error");
         }
     }
 
     public function show_edit_user($user_id = null)
     {
-        if (is_null($user_id) || $user_id == session()->get("login_id")) {
-            //ログイン中のアカウントは編集させない
+        if (is_null($user_id) || $user_id == session()->get("login_id")) {//ログイン中のアカウントは編集させない
             return redirect("admin");
         }
-        $user_data = User::find($user_id);
+        $user = new User();
+        $user_data = $user->getUserData($user_id);
         if (is_null($user_data)) {
             return redirect("admin");
         }
-        $is_publisher = UserRole::where("user_id", $user_id)->where("role_id", 2)->exists();
-        $is_admin = UserRole::where("user_id", $user_id)->where("role_id", 1)->exists();
+        $user_role = new UserRole();
+        $is_publisher = $user_role->isPublisher($user_id);
+        $is_admin = $user_role->isAdmin($user_id);
         $publisher_name = null;
+        $publisher = new Publisher();
         if ($is_admin && $is_publisher) {
             $user_type = 3;
-            $publisher_name = Publisher::where("user_id", $user_id)->first()->publisher_name;
+            $publisher_name = $publisher->getPublisherData($user_id)->publisher_name;
         } else if ($is_admin) {
             $user_type = 2;
         } else if ($is_publisher) {
             $user_type = 1;
-            $publisher_name = Publisher::where("user_id", $user_id)->first()->publisher_name;
+            $publisher_name = $publisher->getPublisherData($user_id)->publisher_name;
         } else {
             $user_type = 0;
         }
@@ -154,7 +159,8 @@ class AdminController extends Controller
 
     public function edit_user(Request $request, $user_id = null)
     {
-        if (is_null($user_id) || !preg_match("/.*\/user_edit\/" . $user_id . "\z/", url()->previous()) || $user_id == session()->get("login_id")) {
+        if (is_null($user_id) || !preg_match("/.*\/user_edit\/" . $user_id . "\z/", url()->previous()) ||
+            $user_id == session()->get("login_id")) {
             return redirect("home");
         }
         $rule = [
@@ -164,7 +170,13 @@ class AdminController extends Controller
             }), "required", "string", "email:rfc", "max:255"],
             "password" => "nullable|string|between:6,32|regex:/[ -~]+/|confirmed"
         ];
-        if (Publisher::where("user_id", $user_id)->exists() || !is_null($request->input("publisher"))) {
+        try {
+            $user_role = new UserRole();
+            $is_publisher = $user_role->isPublisher($user_id);
+        } catch (\Exception $e) {
+            return redirect()->route("error");
+        }
+        if ($is_publisher || !is_null($request->input("publisher"))) {
             $rule = array_merge($rule, ["company_name" => "required|string|between:1,16"]);
         }
         $validator = Validator::make($request->all(), $rule);
@@ -174,43 +186,29 @@ class AdminController extends Controller
                 ->withInput()
                 ->withErrors($validator);
         }
-        $user = User::find($user_id);
-        if (is_null($request->input("password"))) {
-            $user->fill(["email" => $request->input("email"), "user_name" => $request->input("user_name")])->save();
-        } else {
-            $user->fill(["email" => $request->input("email"), "user_name" => $request->input("user_name"), "password" => Hash::make($request->input("password"))])->save();
-        }
-        if (Publisher::where("user_id", $user_id)->exists() || !is_null($request->input("publisher"))) {
-            $publisher = Publisher::where("user_id", $user_id)->first();
-            if (is_null($publisher)) {
-                $publisher_id = strtoupper(Str::random(16));
-                while (Publisher::where("publisher_id", $publisher_id)->exists()) {
-                    $publisher_id = strtoupper(Str::random(16));
+        try {
+            DB::transaction(function () use ($user_id, $request, $is_publisher, $user_role) {
+                $user = new User();
+                $user->updateUserData($user_id, $request->input("email"), $request->input("user_name"),
+                    $request->input("password"));
+                $publisher = new Publisher();
+                if ($is_publisher) {//すでにパブリッシャーで、更新する場合
+                    $publisher->updatePublisherData($user_id, $request->input("company_name"));
+                } elseif (!is_null($request->input("publisher"))) {//パブリッシャー新規登録
+                    $user_role->userRoleCreate($user_id, 2);
+                    $publisher->createPublisherData($user_id, $request->input("company_name"));
                 }
-                Publisher::create([
-                    "publisher_id" => $publisher_id,
-                    "user_id" => $user_id,
-                    "publisher_name" => $request->input("company_name")
-                ]);
-                UserRole::create([
-                    "user_id" => $user_id,
-                    "role_id" => 2
-                ]);
-            } else {
-                $publisher->fill(["publisher_name" => $request->input("company_name")])->save();
-            }
+                $is_admin = $user_role->isAdmin($user_id);
+                if (is_null($request->input("admin")) && $is_admin) {
+                    $user_role->userRoleDelete($user_id, 1);
+                } else if (!is_null($request->input("admin")) && !$is_admin) {
+                    $user_role->userRoleCreate($user_id, 1);
+                }
+            });
+        } catch (\Throwable $e) {
+            return redirect()->route("error");
         }
-        if (is_null($request->input("admin"))) {
-            UserRole::where("user_id", $user_id)->where("role_id", 1)->delete();
-        } else {
-            UserRole::firstOrCreate([
-                "user_id" => $user_id,
-                "role_id" => 1
-            ], [
-                "user_id" => $user_id,
-                "role_id" => 1
-            ]);
-        }
+
         return redirect("admin");
     }
 
@@ -220,8 +218,10 @@ class AdminController extends Controller
             session()->put("admin_select_mode", 2);
             return redirect("admin");
         }
-        $good_data = Good::where("good_id", $good_id)->first();
-        $category_data = GoodsCategory::get();
+        $good = new Good();
+        $good_data = $good->getGoodData($good_id);
+        $goods_category = new GoodsCategory();
+        $category_data = $goods_category->getGoodsCategory();
         if (is_null($good_data)) {
             session()->put("admin_select_mode", 2);
             return redirect("admin");
@@ -249,7 +249,8 @@ class AdminController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-        $old_good = Good::where("good_id", $good_id)->first();
+        $good = new Good();
+        $old_good = $good->getGoodData($good_id);
         if (is_null($old_good)) {
             session()->put("admin_select_mode", 2);
             return redirect("admin");
@@ -259,30 +260,21 @@ class AdminController extends Controller
         $good_stock = $request->input("good_stock");
         $good_category = $request->input("good_category");
         $good_producer = $request->input("good_producer");
-        if ($good_name == $old_good->good_name && $good_price == $old_good->good_price && $good_category == $old_good->good_category && $good_producer && $old_good->good_producer) {
-            $old_good->fill(["good_stock" => $good_stock])->save();
+        if ($good_name == $old_good->good_name && $good_price == $old_good->good_price &&
+            $good_category == $old_good->good_category && $good_producer == $old_good->good_producer) {//在庫のみが変更されてる場合
+            try {
+                $good->goodStockChanger($old_good->id, $good_stock);
+            } catch (\Exception $e) {
+                return redirect()->route("error");
+            }
             session()->put("admin_select_mode", 2);
             return redirect("admin");
         }
-        Good::insert([
-            "good_id" => $old_good->good_id,
-            "good_name" => $good_name,
-            "good_producer" => $good_producer,
-            "good_publisher" => $old_good->good_publisher,
-            "good_price" => $good_price,
-            "good_stock" => $good_stock,
-            "good_category" => $good_category,
-            "picture_path" => $old_good->picture_path,
-            "created_at" => $old_good->created_at,
-            "updated_at" => now(),
-        ]);
         try {
-            $old_good->delete();
+            $good->updateGoodData($old_good->id, $good_name, $good_price, $good_stock, $good_producer, $good_category);
         } catch (\Exception $e) {
-            session()->put("admin_select_mode", 2);
-            return redirect("admin");
+            return redirect()->route("error");
         }
-
         session()->put("admin_select_mode", 2);
         return redirect("admin");
     }

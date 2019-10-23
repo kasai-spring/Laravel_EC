@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Good;
+use App\Models\User;
+use App\Models\UserRole;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class DeveloperController extends Controller
@@ -27,6 +30,13 @@ class DeveloperController extends Controller
         }
         return redirect()
             ->back();
+    }
+
+    public function test_module()
+    {
+        $user_data = User::where("user_name", "like" ,"test123%")->delete();
+        dd($user_data);
+        return dd(UserRole::where("user_id", 1)->where("role_id", 1));
     }
 
 }

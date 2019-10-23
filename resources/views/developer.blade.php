@@ -13,6 +13,7 @@
         @csrf
         <input type="submit" value="実行">
     </form>
+    <a href="{{url("developer/test_module")}}"><input type="button" value="テストモジュール"></a>
 
     <input type="button" value="ajax" onclick="onAjaxClick()">
     <script src="{{asset("js/cart.js")}}" type="text/javascript"></script>

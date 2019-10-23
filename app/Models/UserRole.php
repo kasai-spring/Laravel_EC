@@ -31,4 +31,32 @@ class UserRole extends Model
     public function user(){
         $this -> belongsTo("App\Models\User");
     }
+
+    public function isAdmin(int $user_id) : bool
+    {
+        if(static::where("user_id", $user_id)->where("role_id", 1)->exists()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function isPublisher(int $user_id) : bool
+    {
+        if(static::where("user_id", $user_id)->where("role_id", 2)->exists()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function userRoleCreate(int $user_id, int $role_id){
+        static::create([
+            "user_id" => $user_id,
+            "role_id" => $role_id,
+        ]);
+    }
+
+    public function userRoleDelete(int $user_id, int $role_id){
+        static::where("user_id", $user_id)->where("role_id", $role_id)->delete();
+    }
 }

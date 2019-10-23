@@ -82,3 +82,5 @@ function total_price_calc() {
     });
     $("#total_price").text(total_price);
 }
+
+window.onload = total_price_calc;

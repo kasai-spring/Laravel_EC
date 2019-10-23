@@ -33,4 +33,54 @@ class Cart extends Model
         return $this->belongsTo("App\Models\User");
     }
 
+    //カートテーブルの数量と商品テーブルの在庫との論理チェック
+    public function checkCartData(int $login_id) : bool
+    {
+        $cart_data = static::where("user_id", $login_id)
+            ->join("goods", "goods.good_id", "=", "carts.good_id")
+            ->whereNull("goods.deleted_at")
+            ->whereColumn("goods.good_stock", "<", "carts.quantity")
+            ->get();
+        if(count($cart_data) == 0){
+            return true;
+        }
+        foreach ($cart_data as $data) {
+            if ($data->good_stock == 0) {
+                static::where("user_id", $login_id)
+                    ->where("good_id", $data->good_id)
+                    ->delete();
+            } else {
+                $cart = static::where("user_id", $login_id)
+                    ->where("good_id", $data->good_id)
+                    ->first();
+                $cart->fill(["quantity" => $data->good_stock])
+                    ->save();
+            }
+        }
+        return false;
+    }
+
+    public function getCartData(int $login_id)
+    {
+        return static::where("user_id", $login_id)
+            ->join("goods", "goods.good_id", "=", "carts.good_id")
+            ->whereNull("goods.deleted_at")
+            ->get();
+    }
+
+    public function getCartDataCookie(array $cart_cookie)
+    {
+        $cart_data = Good::whereNull("deleted_at")//(deleted_atがNull) && (cookieに入ってる商品IDのいずれかと一致する)
+        ->where(function ($q) use ($cart_cookie) {
+            foreach ($cart_cookie as $good => $quantity) {
+                $q->orWhere("good_id", $good);
+            }
+        })
+            ->get();
+        foreach ($cart_data as $data){
+            $data["quantity"] = $cart_cookie[$data->good_id];
+        }
+        return $cart_data;
+    }
+
 }
