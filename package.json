@@ -28,7 +28,7 @@
         "vue": "^2.5.17",
         "vue-template-compiler": "^2.6.10",
         "webpack": "^4.40.2",
-        "webpack-cli": "^3.3.9"
+        "webpack-cli": "^3.3.12"
     },
     "dependencies": {
         "css-declaration-sorter": "latest",
